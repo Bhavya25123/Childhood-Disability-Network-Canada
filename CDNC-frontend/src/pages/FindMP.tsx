@@ -4,45 +4,39 @@ import { RunningBanner } from "@/components/Home/RunningBanner";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import api from "@/lib/api";
 
 const FindMP = () => {
   const [postalCode, setPostalCode] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
+  interface MPContact {
+    _id: string;
+    name: string;
+    party: string;
+    constituency: string;
+    email: string;
+    phone: string;
+    image: string;
+  }
+  const [mpList, setMpList] = useState<MPContact[]>([]);
 
-  const mpList = [
-    {
-      name: "Sarah Johnson",
-      party: "Progressive Party",
-      constituency: "Central District",
-      email: "sarah.johnson@parliament.gov",
-      phone: "(555) 123-4567",
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
-    },
-    {
-      name: "Michael Chen",
-      party: "Unity Alliance",
-      constituency: "Eastern District",
-      email: "michael.chen@parliament.gov",
-      phone: "(555) 234-5678",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
-    },
-    {
-      name: "Emma Wilson",
-      party: "Democratic Coalition",
-      constituency: "Western District",
-      email: "emma.wilson@parliament.gov",
-      phone: "(555) 345-6789",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475"
-    }
-  ];
-
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSearchPerformed(true);
-    toast({
-      title: "Search Complete",
-      description: "Found representatives for your area.",
-    });
+    try {
+      const res = await api.get("/mps");
+      setMpList(res.data);
+      setSearchPerformed(true);
+      toast({
+        title: "Search Complete",
+        description: "Found representatives for your area.",
+      });
+    } catch (err) {
+      toast({
+        title: "Search Failed",
+        description: "Unable to load MP contacts.",
+        variant: "destructive",
+      });
+    }
   };
 
   const successStories = [
@@ -56,7 +50,7 @@ const FindMP = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow pt-16">
-        <section className="bg-purple-light/30 py-16 px-8">
+        <section className="bg-purple-50 py-16 px-8">
           <div className="max-w-screen-xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-purple-900">Find Your MP</h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8">
@@ -70,7 +64,7 @@ const FindMP = () => {
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
                   placeholder="Enter your postal code"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
                 <Button type="submit" className="btn btn-secondary">
@@ -81,9 +75,9 @@ const FindMP = () => {
           </div>
         </section>
 
-        <RunningBanner 
+        <RunningBanner
           items={successStories}
-          className="bg-purple/10 text-purple-900 py-3"
+          className="bg-purple-50 text-purple-900 py-3"
           speed={20}
         />
 
@@ -94,7 +88,7 @@ const FindMP = () => {
               
               <div className="grid md:grid-cols-3 gap-8">
                 {mpList.map((mp, index) => (
-                  <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-purple/10">
+                  <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-purple-200">
                     <img
                       src={mp.image}
                       alt={mp.name}
@@ -114,10 +108,10 @@ const FindMP = () => {
                       </p>
                     </div>
                     <div className="mt-4 space-y-2">
-                      <Button variant="outline" className="w-full border-purple text-purple-900 hover:bg-purple hover:text-white">
+                      <Button variant="outline" className="w-full border-purple-600 text-purple-900 hover:bg-purple-600 hover:text-white">
                         Contact MP
                       </Button>
-                      <Button variant="outline" className="w-full border-purple text-purple-900 hover:bg-purple hover:text-white">
+                      <Button variant="outline" className="w-full border-purple-600 text-purple-900 hover:bg-purple-600 hover:text-white">
                         Schedule Meeting
                       </Button>
                     </div>

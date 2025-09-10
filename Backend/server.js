@@ -4,10 +4,11 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require("http");
 
-const authRoutes = require("./routes/auth.routes");
-const User = require("./Data/User");
-
 dotenv.config();
+
+const authRoutes = require("./routes/auth.routes");
+const mpRoutes = require("./routes/mp.routes");
+const User = require("./Data/User");
 
 // App + Server
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/mps", mpRoutes);
 
 // MongoDB
 mongoose

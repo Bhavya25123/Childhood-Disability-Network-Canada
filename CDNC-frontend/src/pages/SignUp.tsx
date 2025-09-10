@@ -44,13 +44,13 @@ const SignUp = () => {
 
   return (
     <PageLayout>
-      <section className="bg-purple-light/30 py-16 px-8">
-        <div className="max-w-screen-xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-purple-900">Create Account</h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-8">
-            Join CDNC to access resources and community
-          </p>
-          <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-purple/10 p-8">
+      <section className="bg-purple-50 py-16 px-8">
+          <div className="max-w-screen-xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-purple-900">Create Account</h1>
+            <p className="text-lg md:text-xl text-gray-600 mb-8">
+              Join CDNC to access resources and community
+            </p>
+            <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-purple-200 p-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -61,7 +61,7 @@ const SignUp = () => {
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
@@ -75,7 +75,7 @@ const SignUp = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
@@ -90,7 +90,7 @@ const SignUp = () => {
                     id="city"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
                 <div>
@@ -102,7 +102,7 @@ const SignUp = () => {
                     id="province"
                     value={province}
                     onChange={(e) => setProvince(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               </div>
@@ -117,7 +117,7 @@ const SignUp = () => {
                     id="zipCode"
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
                 <div>
@@ -129,7 +129,7 @@ const SignUp = () => {
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               </div>
@@ -143,21 +143,21 @@ const SignUp = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-purple hover:bg-purple-dark text-white"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               >
                 Create Account
               </Button>
 
               <p className="text-sm text-center mt-4">
                 Already have an account?{' '}
-                <Link to="/sign-in" className="text-purple font-medium">
+                <Link to="/sign-in" className="text-purple-600 font-medium">
                   Log In
                 </Link>
               </p>
