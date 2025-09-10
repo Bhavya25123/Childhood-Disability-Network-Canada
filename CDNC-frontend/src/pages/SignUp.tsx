@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { register } from "@/lib/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
@@ -145,6 +145,10 @@ const SignUp = () => {
 
               <Button type="submit" className="w-full bg-purple hover:bg-purple-dark text-white">
                 Sign Up
+              </Button>
+
+              <Button asChild variant="outline" className="w-full mt-2">
+                <Link to="/sign-in">Log In</Link>
               </Button>
             </form>
           </div>

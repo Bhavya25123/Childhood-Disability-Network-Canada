@@ -74,12 +74,13 @@ const SignIn = () => {
                 Sign In
               </Button>
 
-              <p className="text-center text-sm text-gray-600 mt-4">
-                Don't have an account?{" "}
-                <Link to="/sign-up" className="text-purple-900 hover:text-purple-900 font-medium">
-                  Create one now
-                </Link>
-              </p>
+              <Button
+                asChild
+                variant="outline"
+                className="w-full mt-2"
+              >
+                <Link to="/sign-up">Create Account</Link>
+              </Button>
             </form>
           </div>
         </div>

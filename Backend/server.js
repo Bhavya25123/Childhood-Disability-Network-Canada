@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const http = require("http");
 
 const authRoutes = require("./routes/auth.routes");
+const User = require("./Data/User");
 
 dotenv.config();
 
@@ -21,15 +22,17 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 // MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(async () => {
     console.log("✅ MongoDB connected");
+    // Ensure obsolete indexes (e.g., legacy username) are removed
+    await User.syncIndexes();
 
     const PORT = process.env.PORT || 5001;
     server.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
-    
     });
   })
-  .catch(err => console.error("❌ Mongo error:", err));
+  .catch((err) => console.error("❌ Mongo error:", err));
 
