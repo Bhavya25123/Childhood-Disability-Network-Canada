@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { register } from "@/lib/auth";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
   const [fullName, setFullName] = useState("");
@@ -28,13 +29,17 @@ const SignUp = () => {
       setDescription("");
       setPassword("");
       navigate("/sign-in");
-    } catch (err) {
-      toast({
-        title: "Sign up failed",
-        description: "Unable to create account",
-        variant: "destructive",
-      });
-    }
+      } catch (err) {
+        const message =
+          axios.isAxiosError(err) && err.response?.data?.error
+            ? err.response.data.error
+            : "Unable to create account";
+        toast({
+          title: "Sign up failed",
+          description: message,
+          variant: "destructive",
+        });
+      }
   };
 
   return (

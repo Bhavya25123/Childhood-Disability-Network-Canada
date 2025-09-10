@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { login } from "@/lib/auth";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -20,13 +21,17 @@ const SignIn = () => {
       });
       setEmail("");
       setPassword("");
-    } catch (err) {
-      toast({
-        title: "Sign in failed",
-        description: "Invalid credentials",
-        variant: "destructive",
-      });
-    }
+      } catch (err) {
+        const message =
+          axios.isAxiosError(err) && err.response?.data?.error
+            ? err.response.data.error
+            : "Invalid credentials";
+        toast({
+          title: "Sign in failed",
+          description: message,
+          variant: "destructive",
+        });
+      }
   };
 
   return (
