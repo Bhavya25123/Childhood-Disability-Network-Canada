@@ -7,6 +7,7 @@ const mpContactSchema = new mongoose.Schema({
   email: String,
   phone: String,
   image: String,
+  province: String,
 });
 
 // Reuse the main connection string if a dedicated MP one isn't provided

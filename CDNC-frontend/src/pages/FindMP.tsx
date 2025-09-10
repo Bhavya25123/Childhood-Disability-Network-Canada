@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 
 const FindMP = () => {
-  const [postalCode, setPostalCode] = useState("");
+  const [province, setProvince] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
   interface MPContact {
     _id: string;
@@ -23,7 +23,7 @@ const FindMP = () => {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.get("/mps");
+      const res = await api.get("/mps", { params: { province } });
       setMpList(res.data);
       setSearchPerformed(true);
       toast({
@@ -61,9 +61,9 @@ const FindMP = () => {
               <div className="flex gap-4">
                 <input
                   type="text"
-                  value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
-                  placeholder="Enter your postal code"
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value)}
+                  placeholder="Enter your province or territory"
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
