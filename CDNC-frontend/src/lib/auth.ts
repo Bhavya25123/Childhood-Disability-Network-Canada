@@ -2,7 +2,6 @@ import api from "./api";
 
 export interface AuthResponse {
   token: string;
-  role: string;
   email: string;
 }
 
@@ -11,6 +10,16 @@ export async function login(email: string, password: string): Promise<AuthRespon
   return res.data;
 }
 
-export async function register(email: string, password: string, role: string): Promise<void> {
-  await api.post("/auth/register", { email, password, role });
+export interface RegisterPayload {
+  fullName: string;
+  email: string;
+  city?: string;
+  province?: string;
+  zipCode?: string;
+  description?: string;
+  password: string;
+}
+
+export async function register(data: RegisterPayload): Promise<void> {
+  await api.post("/auth/register", data);
 }

@@ -6,17 +6,26 @@ import { register } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Player");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(email, password, role);
+      await register({ fullName, email, city, province, zipCode, description, password });
       toast({ title: "Account created", description: "You can now sign in." });
+      setFullName("");
       setEmail("");
+      setCity("");
+      setProvince("");
+      setZipCode("");
+      setDescription("");
       setPassword("");
       navigate("/sign-in");
     } catch (err) {
@@ -39,6 +48,20 @@ const SignUp = () => {
           <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-purple/10 p-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  required
+                />
+              </div>
+
+              <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email Address
                 </label>
@@ -47,9 +70,63 @@ const SignUp = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
-                    required
                   />
+                </div>
+                <div>
+                  <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1">
+                    Province
+                  </label>
+                  <input
+                    type="text"
+                    id="province"
+                    value={province}
+                    onChange={(e) => setProvince(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
+                    Zip Code
+                  </label>
+                  <input
+                    type="text"
+                    id="zipCode"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  />
+                </div>
               </div>
 
               <div>
@@ -61,24 +138,9 @@ const SignUp = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
-                    required
-                  />
-              </div>
-
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                  Role
-                </label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
-                >
-                  <option value="Player">Player</option>
-                  <option value="Host">Host</option>
-                </select>
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                  required
+                />
               </div>
 
               <Button type="submit" className="w-full bg-purple hover:bg-purple-dark text-white">
