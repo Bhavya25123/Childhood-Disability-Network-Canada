@@ -53,7 +53,7 @@ const { generateToken } = require('../utils/jwt');
       }
 
       const token = generateToken(user);
-      return res.status(200).json({ token, email: user.email });
+      return res.status(200).json({ token, email: user.email, fullName: user.fullName });
     } catch (err) {
       console.error('❌ Login error:', err);
       return res.status(500).json({ error: 'Server error during login' });

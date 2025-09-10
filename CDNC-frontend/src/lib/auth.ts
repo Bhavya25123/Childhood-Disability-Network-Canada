@@ -3,6 +3,7 @@ import api from "./api";
 export interface AuthResponse {
   token: string;
   email: string;
+  fullName: string;
 }
 
 export async function login(email: string, password: string): Promise<AuthResponse> {
