@@ -20,7 +20,7 @@ const SignUp = () => {
     e.preventDefault();
     try {
       await register({ fullName, email, city, province, zipCode, description, password });
-      toast({ title: "Account created", description: "You can now sign in." });
+      toast({ title: "Account created", description: "You can now log in." });
       setFullName("");
       setEmail("");
       setCity("");
@@ -35,7 +35,7 @@ const SignUp = () => {
             ? err.response.data.error
             : "Unable to create account";
         toast({
-          title: "Sign up failed",
+          title: "Account creation failed",
           description: message,
           variant: "destructive",
         });
@@ -149,7 +149,7 @@ const SignUp = () => {
               </div>
 
               <Button type="submit" className="w-full bg-purple hover:bg-purple-dark text-white">
-                Sign Up
+                Create Account
               </Button>
 
               <Button asChild variant="outline" className="w-full mt-2">

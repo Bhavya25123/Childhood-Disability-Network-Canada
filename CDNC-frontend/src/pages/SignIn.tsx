@@ -16,7 +16,7 @@ const SignIn = () => {
       const res = await login(email, password);
       localStorage.setItem("token", res.token);
       toast({
-        title: "Sign in successful",
+        title: "Login successful",
         description: `Welcome back to CDNC!`,
       });
       setEmail("");
@@ -26,11 +26,11 @@ const SignIn = () => {
           axios.isAxiosError(err) && err.response?.data?.error
             ? err.response.data.error
             : "Invalid credentials";
-        toast({
-          title: "Sign in failed",
-          description: message,
-          variant: "destructive",
-        });
+      toast({
+        title: "Login failed",
+        description: message,
+        variant: "destructive",
+      });
       }
   };
 
@@ -76,7 +76,7 @@ const SignIn = () => {
                 type="submit"
                 className="w-full bg-purple hover:bg-purple-dark text-white"
               >
-                Sign In
+                Log In
               </Button>
 
               <Button
