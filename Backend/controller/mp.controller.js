@@ -4,7 +4,12 @@ const list = async (req, res) => {
   try {
     const { province } = req.query;
     const filter = province
-      ? { province: new RegExp(`^${province}$`, "i") }
+      ? {
+          $or: [
+            { province: new RegExp(province, "i") },
+            { "Province / Territory": new RegExp(province, "i") },
+          ],
+        }
       : {};
     const contacts = await MPContact.find(filter);
     return res.json(contacts);

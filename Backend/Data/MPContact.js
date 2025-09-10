@@ -7,7 +7,10 @@ const mpContactSchema = new mongoose.Schema({
   email: String,
   phone: String,
   image: String,
+  // Some datasets store the province under "Province / Territory". Include
+  // both keys so queries work regardless of which field name is present.
   province: String,
+  "Province / Territory": String,
 });
 
 // Reuse the main connection string if a dedicated MP one isn't provided
