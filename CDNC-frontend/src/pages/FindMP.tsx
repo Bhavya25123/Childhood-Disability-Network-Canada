@@ -10,13 +10,12 @@ const FindMP = () => {
   const [province, setProvince] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
   interface MPContact {
-    _id: string;
+    id: string;
     name: string;
     party: string;
     constituency: string;
-    email: string;
-    phone: string;
-    image: string;
+    province: string;
+    startDate?: string;
   }
   const [mpList, setMpList] = useState<MPContact[]>([]);
 
@@ -85,28 +84,17 @@ const FindMP = () => {
           <section className="py-16 px-8">
             <div className="max-w-screen-xl mx-auto">
               <h2 className="text-2xl font-bold mb-8 text-purple-900">Your Representatives</h2>
-              
+
               <div className="grid md:grid-cols-3 gap-8">
                 {mpList.map((mp, index) => (
                   <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-purple-200">
-                    <img
-                      src={mp.image}
-                      alt={mp.name}
-                      className="w-full h-48 object-cover rounded-lg mb-4"
-                    />
                     <h3 className="text-xl font-semibold mb-2 text-purple-900">{mp.name}</h3>
                     <p className="text-gray-600 mb-1">{mp.party}</p>
-                    <p className="text-gray-600 mb-3">{mp.constituency}</p>
-                    <div className="space-y-2">
-                      <p className="text-sm text-gray-600">
-                        <i className="ti ti-mail mr-2" />
-                        {mp.email}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        <i className="ti ti-phone mr-2" />
-                        {mp.phone}
-                      </p>
-                    </div>
+                    <p className="text-gray-600 mb-1">{mp.constituency}</p>
+                    <p className="text-gray-600 mb-3">{mp.province}</p>
+                    {mp.startDate && (
+                      <p className="text-sm text-gray-500">Serving since {mp.startDate}</p>
+                    )}
                     <div className="mt-4 space-y-2">
                       <Button variant="outline" className="w-full border-purple-600 text-purple-900 hover:bg-purple-600 hover:text-white">
                         Contact MP

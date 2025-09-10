@@ -11,7 +11,15 @@ const list = async (req, res) => {
           ],
         }
       : {};
-    const contacts = await MPContact.find(filter);
+    const raw = await MPContact.find(filter).lean();
+    const contacts = raw.map((c) => ({
+      id: c._id,
+      name: [c["First Name"], c["Last Name"]].filter(Boolean).join(" "),
+      party: c["Political Affiliation"],
+      constituency: c["Constituency"],
+      province: c["Province / Territory"] || c.province,
+      startDate: c["Start Date"],
+    }));
     return res.json(contacts);
   } catch (err) {
     console.error("❌ MP fetch error:", err);
