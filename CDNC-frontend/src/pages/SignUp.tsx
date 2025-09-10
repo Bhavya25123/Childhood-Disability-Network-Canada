@@ -148,13 +148,19 @@ const SignUp = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-purple hover:bg-purple-dark text-white">
+              <Button
+                type="submit"
+                className="w-full bg-purple hover:bg-purple-dark text-white"
+              >
                 Create Account
               </Button>
 
-              <Button asChild variant="outline" className="w-full mt-2">
-                <Link to="/sign-in">Log In</Link>
-              </Button>
+              <p className="text-sm text-center mt-4">
+                Already have an account?{' '}
+                <Link to="/sign-in" className="text-purple font-medium">
+                  Log In
+                </Link>
+              </p>
             </form>
           </div>
         </div>

@@ -79,13 +79,12 @@ const SignIn = () => {
                 Log In
               </Button>
 
-              <Button
-                asChild
-                variant="outline"
-                className="w-full mt-2"
-              >
-                <Link to="/sign-up">Create Account</Link>
-              </Button>
+              <p className="text-sm text-center mt-4">
+                Don't have an account?{' '}
+                <Link to="/sign-up" className="text-purple font-medium">
+                  Create Account
+                </Link>
+              </p>
             </form>
           </div>
         </div>
