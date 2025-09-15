@@ -8,7 +8,9 @@ dotenv.config();
 
 const authRoutes = require("./routes/auth.routes");
 const mpRoutes = require("./routes/mp.routes");
+const memberRoutes = require("./routes/member.routes");
 const User = require("./Data/User");
+const Member = require("./Data/Member");
 
 // App + Server
 const app = express();
@@ -22,6 +24,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/mps", mpRoutes);
+app.use("/api/members", memberRoutes);
 
 // MongoDB
 mongoose
@@ -29,7 +32,7 @@ mongoose
   .then(async () => {
     console.log("✅ MongoDB connected");
     // Ensure obsolete indexes (e.g., legacy username) are removed
-    await User.syncIndexes();
+    await Promise.all([User.syncIndexes(), Member.syncIndexes()]);
 
     const PORT = process.env.PORT || 5001;
     server.listen(PORT, () => {
