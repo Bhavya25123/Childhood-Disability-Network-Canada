@@ -38,19 +38,19 @@ export const ResourcesSection = () => {
           icon="ti ti-file-text"
           title="Caregiving Guides"
           description="Access comprehensive guides and tutorials for caregiving basics."
-          link="#"
+          link="/resources#caregiving"
         />
         <ResourceCard
           icon="ti ti-coins"
           title="Financial Support"
           description="Find information about grants, funding, and financial assistance."
-          link="#"
+          link="/resources#financial"
         />
         <ResourceCard
           icon="ti ti-messages"
           title="Community Forum"
           description="Connect with other caregivers, share experiences, and get advice."
-          link="#"
+          link="/resources#community"
         />
       </div>
     </section>
