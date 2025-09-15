@@ -294,7 +294,7 @@ const JoinCommunity = () => {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    className="w-full bg-purple hover:bg-purple-dark text-white"
+                    className="w-full h-11 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
                     disabled={isSubmitting}
                     aria-busy={isSubmitting}
                   >
