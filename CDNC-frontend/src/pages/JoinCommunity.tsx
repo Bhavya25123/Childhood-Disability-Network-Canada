@@ -78,25 +78,35 @@ const JoinCommunity = () => {
       setAgreeToTerms(false);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const status = err.response?.status;
-        const data = err.response?.data as { error?: string; errors?: Record<string, string> } | undefined;
+        console.error("Enrollment request failed", err);
 
-        if (status === 400 && data?.errors) {
-          setErrors(data.errors);
-        } else if (status === 409) {
-          const duplicateMessage = data?.error || "This email is already enrolled.";
-          setErrors({ email: duplicateMessage });
+        if (!err.response || err.code === "ERR_NETWORK") {
           toast({
-            title: "Already enrolled",
-            description: duplicateMessage,
+            title: "Enrollment service unreachable",
+            description: "We couldn't connect to the enrollment service. Please check your connection and try again.",
             variant: "destructive",
           });
         } else {
-          toast({
-            title: "Enrollment unavailable",
-            description: data?.error || "Something went wrong, please try again later.",
-            variant: "destructive",
-          });
+          const status = err.response.status;
+          const data = err.response.data as { error?: string; errors?: Record<string, string> } | undefined;
+
+          if (status === 400 && data?.errors) {
+            setErrors(data.errors);
+          } else if (status === 409) {
+            const duplicateMessage = data?.error || "This email is already enrolled.";
+            setErrors({ email: duplicateMessage });
+            toast({
+              title: "Already enrolled",
+              description: duplicateMessage,
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Enrollment unavailable",
+              description: data?.error || "Something went wrong, please try again later.",
+              variant: "destructive",
+            });
+          }
         }
       } else {
         toast({

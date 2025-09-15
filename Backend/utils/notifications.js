@@ -1,7 +1,12 @@
 const nodemailer = require("nodemailer");
 
-const fetchImpl =
-  typeof globalThis.fetch === "function" ? globalThis.fetch.bind(globalThis) : null;
+let fetchImpl = null;
+if (typeof globalThis.fetch === "function") {
+  fetchImpl = globalThis.fetch.bind(globalThis);
+} else {
+  const nodeFetch = require("node-fetch");
+  fetchImpl = typeof nodeFetch === "function" ? nodeFetch : null;
+}
 
 const htmlEscapeMap = {
   "&": "&amp;",
