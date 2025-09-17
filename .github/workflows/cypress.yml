@@ -61,16 +61,17 @@ jobs:
 
      
       # ---------- Cypress ----------
-      - name: 🧭 Run Cypress E2E
+      - name: ⏳ Wait for frontend to be ready
+        run: npx wait-on http://localhost:8080 --timeout 120000
+
+      - name: 🧪 Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
-          working-directory: CDNC-frontend
-          install: true
-          browser: chrome
-          config: baseUrl=http://localhost:8080
-          # optional to keep; HTTP only
-          wait-on: "http://localhost:8080"
-          wait-on-timeout: 120000
+          working-directory: frontend
+          install: false
+          config-file: cypress.config.js
+          wait-on: 'http://localhost:8080'
+          wait-on-timeout: 120
 
       # ---------- Artifacts & Cleanup ----------
       - name: 📎 Upload Cypress Artifacts (on fail)
