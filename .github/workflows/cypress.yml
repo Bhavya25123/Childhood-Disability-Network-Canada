@@ -1,0 +1,94 @@
+name: ⚙️ Cypress E2E
+
+on:
+  push:
+    branches:
+      - cypress-e2e-testing
+      
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    env:
+      BACKEND_DIR: Backend
+      FRONTEND_DIR: CDNC-frontend
+      NODE_VERSION: 20
+
+    steps:
+      - name: ⬇️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🧪 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # ---------------- Backend ----------------
+      - name: 📦 Install Backend Dependencies
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: npm ci
+
+      - name: 🟢 Start Backend (with secrets)
+        working-directory: ${{ env.BACKEND_DIR }}
+        env:
+          MONGO_URI: ${{ secrets.mongoUri }}
+          JWT_SECRET: ${{ secrets.JWT_seceret }}
+          PORT: ${{ secrets.port }}
+        run: |
+          npm run dev > ../backend.log 2>&1 &
+          echo $! > ../backend.pid
+
+      - name: ⏳ Wait for Backend
+        run: npx --yes wait-on "http://localhost:${{ secrets.port }}"
+
+      # ---------------- Frontend ----------------
+      - name: 📦 Install Frontend Dependencies
+        working-directory: ${{ env.FRONTEND_DIR }}
+        run: npm ci
+
+      - name: 🖥️ Start Frontend (Vite)
+        working-directory: ${{ env.FRONTEND_DIR }}
+        env:
+          VITE_API_BASE_URL: http://localhost:${{ secrets.port }}
+        run: |
+          npm run dev > ../frontend.log 2>&1 &
+          echo $! > ../frontend.pid
+
+      - name: ⏳ Wait for Frontend
+        run: npx --yes wait-on "http://localhost:5173"
+
+     # ---------------- Cypress ----------------
+      - name: 🧭 Run Cypress E2E
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ${{ env.FRONTEND_DIR }}
+          install: true
+          browser: chrome
+          spec: |
+            cypress/e2e/login.cy.js
+            cypress/e2e/signin.cy.js
+        env:
+          CYPRESS_baseUrl: http://localhost:5173
+
+      # ---------------- Artifacts & Cleanup ----------------
+      - name: 📎 Upload Cypress Artifacts (on fail)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: |
+            CDNC-frontend/cypress/screenshots
+            CDNC-frontend/cypress/videos
+
+      - name: 🧹 Stop Servers & Show Logs
+        if: always()
+        run: |
+          kill $(cat backend.pid) 2>/dev/null || true
+          kill $(cat frontend.pid) 2>/dev/null || true
+          echo "—— BACKEND LOG ——"
+          tail -n 200 backend.log || true
+          echo "—— FRONTEND LOG ——"
+          tail -n 200 frontend.log || true
