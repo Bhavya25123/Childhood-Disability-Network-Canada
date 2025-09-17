@@ -33,8 +33,8 @@ jobs:
         working-directory: ${{ env.BACKEND_DIR }}
         env:
         # set BOTH names to cover either code path
-          MONGODB_URI: ${{ secrets.mongoUri }}
-          MONGO_URI:   ${{ secrets.mongoUri }}
+          
+          MONGO_URI:   ${{ secrets.MONGO_URI }}
           JWT_SECRET:  ${{ secrets.JWT_seceret }}
           PORT:        ${{ env.BACKEND_PORT }}
         run: |
