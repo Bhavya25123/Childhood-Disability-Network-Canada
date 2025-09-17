@@ -51,7 +51,7 @@ jobs:
           # Force Vite to use 8080 and fail if taken
           npm run dev 
 
-      # ---------- Wait for both servers ----------
+      # ---------- Wait for both servers ---------
       - name: ⏳ Wait for servers
         run: |
           npx --yes wait-on http://localhost:${{ env.BACKEND_PORT }}
