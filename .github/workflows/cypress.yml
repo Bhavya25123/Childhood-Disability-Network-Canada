@@ -59,12 +59,7 @@ jobs:
           tail -n +1 -f backend.log frontend.log &
           echo $! > tail.pid
 
-      - name: ⏳ Wait for servers
-        run: |
-          # Use TCP for backend so a 404 on "/" doesn't hang the pipeline
-          npx --yes wait-on --timeout 180000 --verbose tcp:localhost:${{ env.BACKEND_PORT }}
-          npx --yes wait-on --timeout 120000 --verbose http://localhost:${{ env.FRONTEND_PORT }}
-
+     
       # ---------- Cypress ----------
       - name: 🧭 Run Cypress E2E
         uses: cypress-io/github-action@v6
