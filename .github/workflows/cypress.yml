@@ -39,10 +39,6 @@ jobs:
         run: |
           npm run dev > ../backend.log 2>&1 &
           echo $! > ../backend.pid
-
-      - name: ⏳ Wait for Backend
-        run: npx --yes wait-on "http://localhost:${{ secrets.port }}"
-
       # ---------------- Frontend ----------------
       - name: 📦 Install Frontend Dependencies
         working-directory: ${{ env.FRONTEND_DIR }}
