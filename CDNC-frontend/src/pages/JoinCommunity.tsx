@@ -3,12 +3,17 @@ import { Footer } from "@/components/Layout/Footer";
 import { RunningBanner } from "@/components/Support/RunningBanner";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import axios from "axios";
 import { toast } from "@/hooks/use-toast";
+import { createMember } from "@/lib/members";
 
 const JoinCommunity = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const testimonials = [
     "Joining this community was the best decision I made as a caregiver. The support is incredible. - Maria T.",
@@ -17,15 +22,102 @@ const JoinCommunity = () => {
     "Finally found people who understand what I'm going through. - Robert J."
   ];
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const validate = () => {
+    const nextErrors: Record<string, string> = {};
+
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      nextErrors.name = "Please tell us your name.";
+    }
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      nextErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    if (!role) {
+      nextErrors.role = "Choose the option that best describes you.";
+    }
+
+    if (!agreeToTerms) {
+      nextErrors.agreeToTerms = "Please agree to the terms to continue.";
+    }
+
+    return nextErrors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Application Submitted",
-      description: "Thank you for joining our community. We'll be in touch soon!",
-    });
-    setEmail("");
-    setName("");
-    setRole("");
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsSubmitting(true);
+
+    try {
+      await createMember({
+        name: name.trim(),
+        email: email.trim(),
+        role,
+        agreeToTerms,
+      });
+
+      toast({
+        title: "You're in!",
+        description: "Thank you for joining our community. Check your inbox for confirmation.",
+      });
+
+      setEmail("");
+      setName("");
+      setRole("");
+      setAgreeToTerms(false);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error("Enrollment request failed", err);
+
+        if (!err.response || err.code === "ERR_NETWORK") {
+          toast({
+            title: "Enrollment service unreachable",
+            description: "We couldn't connect to the enrollment service. Please check your connection and try again.",
+            variant: "destructive",
+          });
+        } else {
+          const status = err.response.status;
+          const data = err.response.data as { error?: string; errors?: Record<string, string> } | undefined;
+
+          if (status === 400 && data?.errors) {
+            setErrors(data.errors);
+          } else if (status === 409) {
+            const duplicateMessage = data?.error || "This email is already enrolled.";
+            setErrors({ email: duplicateMessage });
+            toast({
+              title: "Already enrolled",
+              description: duplicateMessage,
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Enrollment unavailable",
+              description: data?.error || "Something went wrong, please try again later.",
+              variant: "destructive",
+            });
+          }
+        }
+      } else {
+        toast({
+          title: "Enrollment unavailable",
+          description: "Something went wrong, please try again later.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
@@ -102,7 +194,7 @@ const JoinCommunity = () => {
                 Fill out this form to join our community. Membership is free and gives you access to all our resources.
               </p>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Full Name
@@ -112,9 +204,18 @@ const JoinCommunity = () => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                      errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple"
+                    }`}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? "name-error" : undefined}
                     required
                   />
+                  {errors.name && (
+                    <p id="name-error" className="mt-1 text-sm text-red-600">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
                 
                 <div>
@@ -126,9 +227,18 @@ const JoinCommunity = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                      errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple"
+                    }`}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                     required
                   />
+                  {errors.email && (
+                    <p id="email-error" className="mt-1 text-sm text-red-600">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 
                 <div>
@@ -139,7 +249,11 @@ const JoinCommunity = () => {
                     id="role"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple"
+                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                      errors.role ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-purple"
+                    }`}
+                    aria-invalid={Boolean(errors.role)}
+                    aria-describedby={errors.role ? "role-error" : undefined}
                     required
                   >
                     <option value="">Select your role</option>
@@ -149,20 +263,48 @@ const JoinCommunity = () => {
                     <option value="seeking">Seeking Caregiving Resources</option>
                     <option value="other">Other</option>
                   </select>
+                  {errors.role && (
+                    <p id="role-error" className="mt-1 text-sm text-red-600">
+                      {errors.role}
+                    </p>
+                  )}
                 </div>
                 
+                <div className="flex items-start gap-3">
+                  <input
+                    id="agreeToTerms"
+                    type="checkbox"
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple"
+                    aria-invalid={Boolean(errors.agreeToTerms)}
+                    aria-describedby={errors.agreeToTerms ? "terms-error" : undefined}
+                    required
+                  />
+                  <label htmlFor="agreeToTerms" className="text-sm text-gray-700">
+                    I agree to the Terms of Service and Privacy Policy.
+                  </label>
+                </div>
+                {errors.agreeToTerms && (
+                  <p id="terms-error" className="-mt-2 text-sm text-red-600">
+                    {errors.agreeToTerms}
+                  </p>
+                )}
+
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    className="w-full bg-purple hover:bg-purple-dark text-white"
+                    className="w-full h-11 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+                    disabled={isSubmitting}
+                    aria-busy={isSubmitting}
                   >
-                    Join Community
+                    {isSubmitting ? "Submitting..." : "Join Community"}
                   </Button>
                 </div>
                 
-                <p className="text-xs text-gray-500 mt-4">
-                  By joining, you agree to our Terms of Service and Privacy Policy. We'll send you occasional updates about the community.
-                </p>
+                  <p className="text-xs text-gray-500 mt-4">
+                    We'll send you occasional updates about the community. You can opt out at any time.
+                  </p>
               </form>
             </div>
           </div>
