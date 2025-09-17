@@ -64,7 +64,7 @@ jobs:
             cypress/e2e/login.cy.js
             cypress/e2e/signin.cy.js
         env:
-          CYPRESS_baseUrl: http://localhost:5173
+          CYPRESS_baseUrl: http://localhost:8080
 
       # ---------------- Artifacts & Cleanup ----------------
       - name: 📎 Upload Cypress Artifacts (on fail)
