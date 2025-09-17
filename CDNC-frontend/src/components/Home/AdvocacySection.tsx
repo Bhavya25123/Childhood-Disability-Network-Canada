@@ -68,7 +68,7 @@ export const AdvocacySection = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-2xl transform rotate-3 scale-105 opacity-20"></div>
             <img
-              src="public/images/advocacySection"
+              src="/images/advocacySection.png"
               alt="Advocacy illustration showing people coming together to make their voices heard"
               className="relative w-full h-auto rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300"
             />
