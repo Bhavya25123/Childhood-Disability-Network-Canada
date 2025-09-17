@@ -52,9 +52,7 @@ jobs:
           npm run dev > ../frontend.log 2>&1 &
           echo $! > ../frontend.pid
 
-      - name: ⏳ Wait for Frontend
-        run: npx --yes wait-on "http://localhost:5173"
-
+      
      # ---------------- Cypress ----------------
       - name: 🧭 Run Cypress E2E
         uses: cypress-io/github-action@v6
