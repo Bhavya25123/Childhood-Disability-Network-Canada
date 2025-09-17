@@ -11,7 +11,7 @@ const AdvocacyHub = () => {
       <Header />
       <main className="flex-grow pt-16">
         {/* Hero Section */}
-        <section className="bg-purple-100 py-16 px-8">
+        <section className="bg-gray-50 py-16 px-8">
           <div className="max-w-screen-xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-6">Advocacy Hub</h1>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
