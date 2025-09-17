@@ -36,8 +36,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_seceret }}
           PORT: ${{ env.BACKEND_PORT }}     # force 3001 in CI
         run: |
-          npm run dev > ../backend.log 2>&1 &
-          echo $! > ../backend.pid
+          npm run dev 
 
       # ---------- Frontend on 8080 ----------
       - name: 📦 Install Frontend Dependencies
@@ -50,8 +49,7 @@ jobs:
           VITE_API_BASE_URL: http://localhost:${{ env.BACKEND_PORT }}
         run: |
           # Force Vite to use 8080 and fail if taken
-          npm run dev -- --port $FRONTEND_PORT --strictPort > ../frontend.log 2>&1 &
-          echo $! > ../frontend.pid
+          npm run dev 
 
       # ---------- Wait for both servers ----------
       - name: ⏳ Wait for servers
