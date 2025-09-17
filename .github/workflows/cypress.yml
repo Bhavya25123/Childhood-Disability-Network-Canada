@@ -64,14 +64,12 @@ jobs:
       - name: 🧭 Run Cypress E2E
         uses: cypress-io/github-action@v6
         with:
-          working-directory: ${{ env.FRONTEND_DIR }}
+          working-directory: CDNC-frontend
           install: true
           browser: chrome
-          config: baseUrl=http://localhost:${{ env.FRONTEND_PORT }}
-          spec: |
-            cypress/e2e/login.cy.js
-            cypress/e2e/signin.cy.js
-          wait-on: "http://localhost:${{ env.FRONTEND_PORT }},tcp:localhost:${{ env.BACKEND_PORT }}"
+          config: baseUrl=http://localhost:8080
+          # optional to keep; HTTP only
+          wait-on: "http://localhost:8080"
           wait-on-timeout: 120000
 
       # ---------- Artifacts & Cleanup ----------
