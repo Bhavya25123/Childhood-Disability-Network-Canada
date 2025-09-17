@@ -69,7 +69,7 @@ jobs:
         with:
           working-directory: CDNC-frontend
           install: false
-          config-file: cypress.config.js
+          config-file: cypress.config.cjs
           wait-on: 'http://localhost:8080'
           wait-on-timeout: 120000
 
