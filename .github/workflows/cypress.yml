@@ -39,6 +39,7 @@ jobs:
           PORT:        ${{ env.BACKEND_PORT }}
         run: |
           npm run dev 
+          sleep 10
       # ---------- Frontend on 8080 ----------
       - name: 📦 Install Frontend Dependencies
         working-directory: ${{ env.FRONTEND_DIR }}
