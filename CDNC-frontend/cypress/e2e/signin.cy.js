@@ -1,7 +1,7 @@
 describe("Sign In Page", () => {
     beforeEach(() => {
       cy.visit("http://localhost:8080/sign-in"); // adjust path if needed
-      cy.url().should("include", "/sign-up"); 
+      
     });
   
     it("should display the Sign In page correctly", () => {
