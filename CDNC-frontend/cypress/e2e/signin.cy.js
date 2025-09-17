@@ -43,16 +43,40 @@ describe("Sign In Page", () => {
         cy.get('.text-purple-600').click();
         cy.url().should("include", "/sign-up"); 
 
-        cy.get('.text-purple-600')
+        cy.get('[data-lov-id="src/pages/SignUp.tsx:55:14"] > .block')
+        cy.get('#fullName')
+        cy.get('#fullName').type("BhavyaShah");
+        cy.get('#fullName').should("have.value", "BhavyaShah");
+
+
+        
         cy.get('[data-lov-id="src/pages/SignUp.tsx:55:14"] > .block')
         cy.get('#email')
-        cy.get('#email').type("bh@gmail.com");
-        cy.get('#email').should("have.value", "bh@gmail.com");
+        cy.get('#email').type("bhavy@gmail.com");
+        cy.get('#email').should("have.value", "bhavy@gmail.com");
 
         cy.get('[data-lov-id="src/pages/SignUp.tsx:84:16"] > .block')
         cy.get('#city')
         cy.get('#city').type("Oakville");
         cy.get('#city').should("have.value", "Oakville");
+
+        cy.get('[data-lov-id="src/pages/SignUp.tsx:96:16"] > .block')
+        cy.get('#province')
+        cy.get('#province').type("Ontario");
+        cy.get('#province').should("have.value", "Ontario");
+
+        cy.get('[data-lov-id="src/pages/SignUp.tsx:111:16"] > .block')
+        cy.get('#zipCode')
+        cy.get('#zipCode').type("L6H 2N7");
+        cy.get('#zipCode').should("have.value", "L6H 2N7");
+
+        cy.get('[data-lov-id="src/pages/SignUp.tsx:137:14"] > .block')
+        cy.get('#password')
+        cy.get('#password').type("a");
+        cy.get('#password').should("have.value", "a");
+
+        cy.get('.inline-flex').click();
+        cy.visit("/sign-in");
 
      });
   });
