@@ -53,6 +53,7 @@ jobs:
         run: |
           # Force Vite to use 8080 and fail if taken
           npm run dev 
+          sleep 20
 
       # ---------- Wait for both servers ---------
       - name: ⏳ Wait for servers
