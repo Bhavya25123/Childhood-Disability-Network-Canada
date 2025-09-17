@@ -1,6 +1,6 @@
 describe("Sign In Page", () => {
     beforeEach(() => {
-      cy.visit("http://localhost:8080/sign-in"); // adjust path if needed
+      cy.visit("/sign-in"); // adjust path if needed
       
     });
   
@@ -35,7 +35,7 @@ describe("Sign In Page", () => {
       cy.get('#password').type("a");
   
       cy.contains("Log In").click();
-     cy.visit("http://localhost:8080");
+     cy.visit("/");
     });
 
   

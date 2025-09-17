@@ -1,6 +1,6 @@
 describe('template spec', () => {
   it('passes', () => {
-    cy.visit('http://localhost:8080/')
+    cy.visit('/')
   })
   describe("Navigation", () => {
     it("should navigate to the Sign In page", () => {
