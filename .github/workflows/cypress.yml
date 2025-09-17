@@ -13,52 +13,59 @@ jobs:
       FRONTEND_DIR: CDNC-frontend
       NODE_VERSION: 18
       FRONTEND_PORT: 8080
-      BACKEND_PORT: 5001   # different from frontend
+      BACKEND_PORT: 5001
 
     steps:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v4
 
       - name: 🧪 Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
-      # ---------- Backend on 3001 ----------
+      # ---------- Backend (background) ----------
       - name: 📦 Install Backend Dependencies
         working-directory: ${{ env.BACKEND_DIR }}
-        run: npm install
+        run: npm ci
 
       - name: 🟢 Start Backend
         working-directory: ${{ env.BACKEND_DIR }}
         env:
-        # set BOTH names to cover either code path
-          
+          # set both names in case your code reads either
+          MONGODB_URI: ${{ secrets.MONGO_URI }}
           MONGO_URI:   ${{ secrets.MONGO_URI }}
           JWT_SECRET:  ${{ secrets.JWT_seceret }}
           PORT:        ${{ env.BACKEND_PORT }}
         run: |
-          npm run dev 
-          sleep 10
-      # ---------- Frontend on 8080 ----------
+          nohup npm run dev > ../backend.log 2>&1 &
+          echo $! > ../backend.pid
+
+      # ---------- Frontend (background) ----------
       - name: 📦 Install Frontend Dependencies
         working-directory: ${{ env.FRONTEND_DIR }}
-        run: npm install
+        run: npm ci
 
       - name: 🖥️ Start Frontend (Vite on 8080)
         working-directory: ${{ env.FRONTEND_DIR }}
         env:
           VITE_API_BASE_URL: http://localhost:${{ env.BACKEND_PORT }}
         run: |
-          # Force Vite to use 8080 and fail if taken
-          npm run dev 
-          sleep 20
+          nohup npm run dev -- --port $FRONTEND_PORT --strictPort > ../frontend.log 2>&1 &
+          echo $! > ../frontend.pid
 
-      # ---------- Wait for both servers ---------
+      # ---------- Tail logs + Wait ----------
+      - name: 🪵 Tail logs (background)
+        run: |
+          tail -n +1 -f backend.log frontend.log &
+          echo $! > tail.pid
+
       - name: ⏳ Wait for servers
         run: |
-          npx --yes wait-on http://localhost:${{ env.BACKEND_PORT }}
-          npx --yes wait-on http://localhost:${{ env.FRONTEND_PORT }}
+          # Use TCP for backend so a 404 on "/" doesn't hang the pipeline
+          npx --yes wait-on --timeout 180000 --verbose tcp:localhost:${{ env.BACKEND_PORT }}
+          npx --yes wait-on --timeout 120000 --verbose http://localhost:${{ env.FRONTEND_PORT }}
 
       # ---------- Cypress ----------
       - name: 🧭 Run Cypress E2E
@@ -67,12 +74,11 @@ jobs:
           working-directory: ${{ env.FRONTEND_DIR }}
           install: true
           browser: chrome
-          # baseUrl is your 8080 frontend
           config: baseUrl=http://localhost:${{ env.FRONTEND_PORT }}
           spec: |
             cypress/e2e/login.cy.js
             cypress/e2e/signin.cy.js
-          wait-on: "http://localhost:${{ env.FRONTEND_PORT }},http://localhost:${{ env.BACKEND_PORT }}"
+          wait-on: "http://localhost:${{ env.FRONTEND_PORT }},tcp:localhost:${{ env.BACKEND_PORT }}"
           wait-on-timeout: 120000
 
       # ---------- Artifacts & Cleanup ----------
@@ -84,13 +90,14 @@ jobs:
           path: |
             CDNC-frontend/cypress/screenshots
             CDNC-frontend/cypress/videos
+            backend.log
+            frontend.log
 
       - name: 🧹 Stop Servers & Show Logs
         if: always()
         run: |
+          kill $(cat tail.pid) 2>/dev/null || true
           kill $(cat backend.pid) 2>/dev/null || true
           kill $(cat frontend.pid) 2>/dev/null || true
-          echo "—— BACKEND LOG ——"
-          tail -n 200 backend.log || true
-          echo "—— FRONTEND LOG ——"
-          tail -n 200 frontend.log || true
+          echo "—— BACKEND LOG ——"; tail -n 200 backend.log || true
+          echo "—— FRONTEND LOG ——"; tail -n 200 frontend.log || true
