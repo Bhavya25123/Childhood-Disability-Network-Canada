@@ -1,6 +1,7 @@
 describe("Sign In Page", () => {
     beforeEach(() => {
       cy.visit("http://localhost:8080/sign-in"); // adjust path if needed
+      cy.url().should("include", "/sign-up"); 
     });
   
     it("should display the Sign In page correctly", () => {
@@ -52,7 +53,7 @@ describe("Sign In Page", () => {
         cy.get('#city')
         cy.get('#city').type("Oakville");
         cy.get('#city').should("have.value", "Oakville");
-        
+
      });
   });
   
