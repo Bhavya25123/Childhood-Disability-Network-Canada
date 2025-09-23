@@ -8,15 +8,24 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+
+    # Needed to create PRs with GITHUB_TOKEN
+    permissions:
+      contents: write
+      pull-requests: write
+
     env:
       BACKEND_DIR: Backend
       FRONTEND_DIR: CDNC-frontend
       NODE_VERSION: 18
       FRONTEND_PORT: 8080
       BACKEND_PORT: 5001
+
     steps:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 🧪 Setup Node.js
         uses: actions/setup-node@v3
@@ -31,10 +40,10 @@ jobs:
       - name: 🟢 Start Backend
         working-directory: ${{ env.BACKEND_DIR }}
         env:
-          # set both names in case your code reads either
+          # Provide both names in case code reads either
           MONGODB_URI: ${{ secrets.MONGO_URI }}
           MONGO_URI:   ${{ secrets.MONGO_URI }}
-          JWT_SECRET:  ${{ secrets.JWT_seceret }}
+          JWT_SECRET:  ${{ secrets.JWT_SECRET || secrets.JWT_seceret }}
           PORT:        ${{ env.BACKEND_PORT }}
         run: |
           nohup npm run dev > ../backend.log 2>&1 &
@@ -59,11 +68,10 @@ jobs:
           tail -n +1 -f backend.log frontend.log &
           echo $! > tail.pid
 
-     
-      # ---------- Cypress ----------
       - name: ⏳ Wait for frontend to be ready
         run: npx wait-on http://localhost:8080 --timeout 120000
 
+      # ---------- Cypress ----------
       - name: 🧪 Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
@@ -72,29 +80,35 @@ jobs:
           config-file: cypress.config.cjs
           wait-on: 'http://localhost:8080'
           wait-on-timeout: 120000
+
       # ---------- Create/Update PR master -> main if tests passed ----------
       - name: 🔀 Open PR to main
-        if: success()
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/github-script@v7
         with:
           script: |
-            const prs = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+            const { owner, repo } = context.repo;
+            // Is there already an open PR from master -> main?
+            const { data: openPRs } = await github.rest.pulls.list({
+              owner,
+              repo,
               state: 'open',
-              head: `${context.repo.owner}:master`,
+              head: `${owner}:master`,
               base: 'main'
             });
-            if (!prs.data.length) {
-              await github.rest.pulls.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+            if (openPRs.length) {
+              core.info(`PR already open: #${openPRs[0].number}`);
+            } else {
+              const { data: pr } = await github.rest.pulls.create({
+                owner,
+                repo,
                 title: "✅ E2E passed: Merge master → main",
                 head: "master",
-                base: "main"
+                base: "main",
+                body: "Auto-created after Cypress E2E passed on master."
               });
+              core.info(`Created PR #${pr.number}`);
             }
-
 
       # ---------- Artifacts & Cleanup ----------
       - name: 📎 Upload Cypress Artifacts (on fail)
