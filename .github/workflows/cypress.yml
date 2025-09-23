@@ -2,7 +2,7 @@ name: ⚙️ Cypress E2E
 
 on:
   push:
-    branches: [ cypress-e2e-testing ]
+    branches: [ master ]
   pull_request:
 
 jobs:
