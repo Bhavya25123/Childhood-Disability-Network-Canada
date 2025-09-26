@@ -135,7 +135,7 @@ const JoinCommunity = () => {
             <RunningBanner 
               items={testimonials}
               className="bg-purple/20 text-purple-900 rounded-lg py-2 mt-8"
-              speed={21}
+              
             />
           </div>
         </section>
