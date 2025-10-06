@@ -4,15 +4,20 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { login } from "@/lib/auth";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getErrorMessage, logError } from "@/utils/error";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+    setIsSubmitting(true);
     try {
       const res = await login(email, password);
       localStorage.setItem("token", res.token);
@@ -24,17 +29,18 @@ const SignIn = () => {
       setEmail("");
       setPassword("");
       navigate("/");
-      } catch (err) {
-        const message =
-          axios.isAxiosError(err) && err.response?.data?.error
-            ? err.response.data.error
-            : "Invalid credentials";
+    } catch (err) {
+      const message = getErrorMessage(err, "Invalid credentials");
+      logError("SignIn", err);
+      setFormError(message);
       toast({
         title: "Login failed",
         description: message,
         variant: "destructive",
       });
-      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,6 +52,12 @@ const SignIn = () => {
             Sign in to access your caregiver resources and community
           </p>
           <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm border border-purple-200 p-8">
+            {formError ? (
+              <Alert variant="destructive" className="mb-4 text-left">
+                <AlertTitle>We couldn&apos;t sign you in</AlertTitle>
+                <AlertDescription>{formError}</AlertDescription>
+              </Alert>
+            ) : null}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -55,10 +67,15 @@ const SignIn = () => {
                   type="email"
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    if (formError) {
+                      setFormError(null);
+                    }
+                    setEmail(e.target.value);
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    required
-                  />
+                  required
+                />
               </div>
 
               <div>
@@ -69,17 +86,23 @@ const SignIn = () => {
                   type="password"
                   id="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    if (formError) {
+                      setFormError(null);
+                    }
+                    setPassword(e.target.value);
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    required
-                  />
+                  required
+                />
               </div>
 
               <Button
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                disabled={isSubmitting}
               >
-                Log In
+                {isSubmitting ? "Signing in..." : "Log In"}
               </Button>
 
               <p className="text-sm text-center mt-4">

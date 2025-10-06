@@ -14,12 +14,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getErrorMessage, logError } from "@/utils/error";
 
 const FindMP = () => {
   const [city, setCity] = useState("");
   const [mpList, setMpList] = useState<MPContact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   interface MPContact {
     id: string;
@@ -30,11 +33,30 @@ const FindMP = () => {
     startDate?: string;
   }
 
+  const handleCityChange = (value: string) => {
+    setCity(value);
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
+  };
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!city.trim()) {
+      setErrorMessage("Enter a city or constituency to begin your search.");
+      toast({
+        title: "City required",
+        description: "Let us know where you live so we can suggest representatives.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setSearchPerformed(true);
     setMpList([]);
+    setErrorMessage(null);
 
     try {
       const res = await api.get("/mps", { params: { constituency: city } });
@@ -46,9 +68,12 @@ const FindMP = () => {
       }
       setMpList(res.data);
     } catch (err) {
+      const message = getErrorMessage(err, "Unable to load MP contacts. Please try again later.");
+      logError("FindMP", err);
+      setErrorMessage(message);
       toast({
         title: "Search Failed",
-        description: "Unable to load MP contacts. Please try again later.",
+        description: message,
         variant: "destructive",
       });
       setMpList([]);
@@ -91,15 +116,24 @@ const FindMP = () => {
                 <Input
                   type="text"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) => handleCityChange(e.target.value)}
                   placeholder="e.g., Toronto Centre, Calgary Skyview"
                   className="flex-1 px-4 py-3 border-none bg-transparent focus:outline-none"
-                  required
                 />
-                <Button type="submit" className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
-                  Search
+                <Button
+                  type="submit"
+                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Searching..." : "Search"}
                 </Button>
               </form>
+              {errorMessage ? (
+                <Alert variant="destructive" className="mb-4 text-left">
+                  <AlertTitle>There was a problem with your search</AlertTitle>
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              ) : null}
                 <p className="text-gray-600 text-sm">
                   Prefer to search by your postal code?{" "}
                   <a

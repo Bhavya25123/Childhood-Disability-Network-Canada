@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormEvent, useMemo, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getErrorMessage, logError } from "@/utils/error";
 
 interface MPContact {
   id: string;
@@ -42,6 +44,20 @@ const SendLetter = () => {
   const [postalCode, setPostalCode] = useState("");
   const [customMessage, setCustomMessage] = useState("");
   const [letterContent, setLetterContent] = useState(defaultLetterTemplate);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [letterError, setLetterError] = useState<string | null>(null);
+
+  const clearSearchError = () => {
+    if (searchError) {
+      setSearchError(null);
+    }
+  };
+
+  const clearLetterError = () => {
+    if (letterError) {
+      setLetterError(null);
+    }
+  };
 
   const successMessages = [
     "Your draft can help spotlight the needs of caregivers across the country.",
@@ -59,15 +75,19 @@ const SendLetter = () => {
     event.preventDefault();
 
     if (!city.trim()) {
+      const message = "Enter a city or constituency to search for your representative.";
+      setSearchError(message);
       toast({
-        title: "Enter a city or constituency",
-        description: "Please provide the area you live in so we can look up your representative.",
+        title: "City required",
+        description: message,
+        variant: "destructive",
       });
       return;
     }
 
     setIsSearching(true);
     setSearchPerformed(true);
+    setSearchError(null);
 
     try {
       const res = await api.get<MPContact[]>("/mps", { params: { constituency: city } });
@@ -79,10 +99,14 @@ const SendLetter = () => {
       }
       setMpList(res.data);
       setSelectedMpId(res.data[0]?.id ?? "");
+      clearLetterError();
     } catch (error) {
+      const message = getErrorMessage(error, "Unable to load representatives right now. Please try again soon.");
+      logError("SendLetter:search", error);
+      setSearchError(message);
       toast({
         title: "Search failed",
-        description: "Unable to load representatives right now. Please try again soon.",
+        description: message,
         variant: "destructive",
       });
       setMpList([]);
@@ -104,28 +128,36 @@ const SendLetter = () => {
 
     const representative = selectedRepresentative;
 
+    setLetterError(null);
+
     if (!representative) {
+      const message = "Select who you would like to address before generating your draft letter.";
+      setLetterError(message);
       toast({
         title: "Select a representative",
-        description: "Choose who you would like to address before generating your draft letter.",
+        description: message,
         variant: "destructive",
       });
       return;
     }
 
     if (!name.trim()) {
+      const message = "Including your name helps personalize the letter.";
+      setLetterError(message);
       toast({
         title: "Add your name",
-        description: "Including your name helps personalize the letter.",
+        description: message,
         variant: "destructive",
       });
       return;
     }
 
     if (!email.trim()) {
+      const message = "Sharing your contact information helps the representative respond to you.";
+      setLetterError(message);
       toast({
         title: "Add an email address",
-        description: "Sharing your contact information helps the representative respond to you.",
+        description: message,
         variant: "destructive",
       });
       return;
@@ -169,23 +201,32 @@ const SendLetter = () => {
    */
   const handleCopyLetter = async () => {
     if (!letterContent.trim()) {
+      const message = "Generate or edit your letter before copying it to the clipboard.";
+      setLetterError(message);
       toast({
         title: "Nothing to copy",
-        description: "Generate or edit your letter before copying it to the clipboard.",
+        description: message,
       });
       return;
     }
 
     try {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") {
+        throw new Error("Clipboard access is not available in this browser.");
+      }
+
       await navigator.clipboard.writeText(letterContent);
       toast({
         title: "Draft copied",
         description: "Your advocacy letter draft is ready to paste into an email or document.",
       });
     } catch (error) {
+      const message = getErrorMessage(error, "We couldn't copy the letter automatically. Please select the text and copy it manually.");
+      logError("SendLetter:copy", error);
+      setLetterError(message);
       toast({
         title: "Copy failed",
-        description: "We couldn't copy the letter automatically. Please select the text and copy it manually.",
+        description: message,
         variant: "destructive",
       });
     }
@@ -197,6 +238,7 @@ const SendLetter = () => {
    */
   const handleResetTemplate = () => {
     setLetterContent(defaultLetterTemplate);
+    setLetterError(null);
     toast({
       title: "Template restored",
       description: "The original template has been reloaded. You can customize it again at any time.",
@@ -304,7 +346,10 @@ const SendLetter = () => {
                     <Input
                       type="text"
                       value={city}
-                      onChange={(event) => setCity(event.target.value)}
+                      onChange={(event) => {
+                        clearSearchError();
+                        setCity(event.target.value);
+                      }}
                       placeholder="Enter your city or constituency"
                       className="flex-1"
                     />
@@ -312,6 +357,12 @@ const SendLetter = () => {
                       {isSearching ? "Searching..." : "Search"}
                     </Button>
                   </form>
+                  {searchError ? (
+                    <Alert variant="destructive" className="text-left">
+                      <AlertTitle>Unable to look up representatives</AlertTitle>
+                      <AlertDescription>{searchError}</AlertDescription>
+                    </Alert>
+                  ) : null}
                   {searchPerformed && mpList.length === 0 && !isSearching ? (
                     <p className="text-sm text-gray-600">
                       No representatives were found for that area. Try a different spelling or nearby city.
@@ -325,7 +376,10 @@ const SendLetter = () => {
                       <select
                         id="representative"
                         value={selectedMpId}
-                        onChange={(event) => setSelectedMpId(event.target.value)}
+                        onChange={(event) => {
+                          clearLetterError();
+                          setSelectedMpId(event.target.value);
+                        }}
                         className="w-full rounded-md border border-purple/20 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple"
                         required
                       >
@@ -358,7 +412,10 @@ const SendLetter = () => {
                       type="text"
                       id="name"
                       value={name}
-                      onChange={(event) => setName(event.target.value)}
+                      onChange={(event) => {
+                        clearLetterError();
+                        setName(event.target.value);
+                      }}
                       placeholder="e.g., Alex Morgan"
                       required
                     />
@@ -371,7 +428,10 @@ const SendLetter = () => {
                       type="email"
                       id="email"
                       value={email}
-                      onChange={(event) => setEmail(event.target.value)}
+                      onChange={(event) => {
+                        clearLetterError();
+                        setEmail(event.target.value);
+                      }}
                       placeholder="you@example.com"
                       required
                     />
@@ -387,7 +447,10 @@ const SendLetter = () => {
                       type="text"
                       id="postalCode"
                       value={postalCode}
-                      onChange={(event) => setPostalCode(event.target.value)}
+                      onChange={(event) => {
+                        clearLetterError();
+                        setPostalCode(event.target.value);
+                      }}
                       placeholder="e.g., M5H 2N2"
                     />
                   </div>
@@ -398,7 +461,10 @@ const SendLetter = () => {
                     <Textarea
                       id="customMessage"
                       value={customMessage}
-                      onChange={(event) => setCustomMessage(event.target.value)}
+                      onChange={(event) => {
+                        clearLetterError();
+                        setCustomMessage(event.target.value);
+                      }}
                       placeholder="Share your caregiving story, local challenges, or specific requests."
                       rows={3}
                     />
@@ -412,7 +478,10 @@ const SendLetter = () => {
                   <Textarea
                     id="letterContent"
                     value={letterContent}
-                    onChange={(event) => setLetterContent(event.target.value)}
+                    onChange={(event) => {
+                      clearLetterError();
+                      setLetterContent(event.target.value);
+                    }}
                     rows={12}
                     className="bg-white"
                   />
@@ -420,6 +489,13 @@ const SendLetter = () => {
                     Edit the draft as needed. When you're ready, copy it into an email, print it, or paste it into your preferred messaging tool.
                   </p>
                 </div>
+
+                {letterError ? (
+                  <Alert variant="destructive" className="text-left">
+                    <AlertTitle>Action required</AlertTitle>
+                    <AlertDescription>{letterError}</AlertDescription>
+                  </Alert>
+                ) : null}
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <Button type="submit" className="flex-1 bg-purple text-white hover:bg-purple-dark">
