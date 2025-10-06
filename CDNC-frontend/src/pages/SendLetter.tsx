@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getErrorMessage, logError } from "@/utils/error";
+import { validateCityOrConstituency, validateEmail, validatePostalCode } from "@/utils/validation";
 
 interface MPContact {
   id: string;
@@ -46,6 +47,11 @@ const SendLetter = () => {
   const [letterContent, setLetterContent] = useState(defaultLetterTemplate);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [letterError, setLetterError] = useState<string | null>(null);
+  const [letterFieldErrors, setLetterFieldErrors] = useState({
+    name: "",
+    email: "",
+    postalCode: "",
+  });
 
   const clearSearchError = () => {
     if (searchError) {
@@ -71,15 +77,27 @@ const SendLetter = () => {
     [mpList, selectedMpId]
   );
 
+  const validateLetterFields = () => {
+    const nextErrors = {
+      name: name.trim() ? "" : "Your name is required.",
+      email: validateEmail(email, "Email address"),
+      postalCode: validatePostalCode(postalCode, "Postal code"),
+    };
+
+    setLetterFieldErrors(nextErrors);
+
+    return Object.values(nextErrors).every((message) => message === "");
+  };
+
   const handleSearchRepresentatives = async (event: FormEvent) => {
     event.preventDefault();
 
-    if (!city.trim()) {
-      const message = "Enter a city or constituency to search for your representative.";
-      setSearchError(message);
+    const cityValidationMessage = validateCityOrConstituency(city);
+    if (cityValidationMessage) {
+      setSearchError(cityValidationMessage);
       toast({
-        title: "City required",
-        description: message,
+        title: "Update your search",
+        description: cityValidationMessage,
         variant: "destructive",
       });
       return;
@@ -141,23 +159,10 @@ const SendLetter = () => {
       return;
     }
 
-    if (!name.trim()) {
-      const message = "Including your name helps personalize the letter.";
-      setLetterError(message);
+    if (!validateLetterFields()) {
       toast({
-        title: "Add your name",
-        description: message,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!email.trim()) {
-      const message = "Sharing your contact information helps the representative respond to you.";
-      setLetterError(message);
-      toast({
-        title: "Add an email address",
-        description: message,
+        title: "Complete your details",
+        description: "We need your name, a valid email, and postal code to personalize the letter.",
         variant: "destructive",
       });
       return;
@@ -178,7 +183,7 @@ const SendLetter = () => {
 
     const signature = [
       name.trim(),
-      [city.trim(), postalCode.trim()].filter(Boolean).join(", "),
+      [city.trim(), postalCode.trim().toUpperCase()].filter(Boolean).join(", "),
       email.trim() ? `Email: ${email.trim()}` : "",
     ]
       .filter(Boolean)
@@ -199,328 +204,339 @@ const SendLetter = () => {
    * clipboard. Users can then paste the message into email, print dialogs, or
    * any other channel they prefer to send through.
    */
-  const handleCopyLetter = async () => {
-    if (!letterContent.trim()) {
-      const message = "Generate or edit your letter before copying it to the clipboard.";
-      setLetterError(message);
-      toast({
-        title: "Nothing to copy",
-        description: message,
-      });
-      return;
-    }
+  const handleCopyDraft = async () => {
+    clearLetterError();
 
     try {
-      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== "function") {
-        throw new Error("Clipboard access is not available in this browser.");
-      }
-
       await navigator.clipboard.writeText(letterContent);
       toast({
         title: "Draft copied",
-        description: "Your advocacy letter draft is ready to paste into an email or document.",
+        description: "Paste the letter into your preferred sending method.",
       });
     } catch (error) {
-      const message = getErrorMessage(error, "We couldn't copy the letter automatically. Please select the text and copy it manually.");
       logError("SendLetter:copy", error);
-      setLetterError(message);
       toast({
-        title: "Copy failed",
-        description: message,
+        title: "Copy unavailable",
+        description: "We couldn't access your clipboard. Please select and copy the text manually.",
         variant: "destructive",
       });
     }
   };
 
   /**
-   * Restores the original template text so the user can start over without
-   * refreshing the page or manually deleting their draft.
+   * Restores the editable textarea back to the default template so the user
+   * can start fresh while keeping any search results they've already loaded.
    */
-  const handleResetTemplate = () => {
+  const handleResetDraft = () => {
+    clearLetterError();
     setLetterContent(defaultLetterTemplate);
-    setLetterError(null);
     toast({
       title: "Template restored",
-      description: "The original template has been reloaded. You can customize it again at any time.",
+      description: "We've reset the draft to the default template.",
     });
   };
 
+  const handleOpenExternalLink = () => {
+    window.open("https://www.ourcommons.ca/members/en", "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-
-      <main className="pt-16">
-        <section className="bg-purple-light/30 py-16 px-8">
+      <main className="flex-grow pt-16">
+        {/* Hero Section with Search Form */}
+        <section className="bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 py-20 px-4 sm:px-8">
           <div className="max-w-screen-xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-purple-900">
-              Create Your Advocacy Letter
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-purple-900">
+              Find Your MP
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8">
-              Draft a personalized letter to your representative advocating for better support and recognition for caregivers.
+            <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10">
+              Easily connect with your local Member of Parliament to advocate for caregiver support and make a difference in your community.
             </p>
-            <RunningBanner
-              items={successMessages}
-              className="bg-purple/20 text-purple-900 rounded-lg py-2 mt-8"
-              speed={15}
-            />
-            </div>
-          </section>
 
-        <section className="py-16 px-8 bg-white">
-          <div className="max-w-screen-xl mx-auto grid lg:grid-cols-[1fr_1.1fr] gap-12">
-            <div>
-              <h2 className="text-3xl font-bold mb-6 text-purple-900">Why Your Letter Matters</h2>
-
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="bg-purple/10 p-3 rounded-lg h-fit">
-                    <i className="ti ti-chart-bar text-purple-900 text-2xl"></i>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">2.6 Million Caregivers</h3>
-                    <p className="text-gray-600">
-                      There are over 2.6 million people providing unpaid care to a family member or friend in the country.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="bg-purple/10 p-3 rounded-lg h-fit">
-                    <i className="ti ti-clock text-purple-900 text-2xl"></i>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">26+ Hours Weekly</h3>
-                    <p className="text-gray-600">
-                      The average caregiver provides more than 26 hours of care per week, equivalent to a part-time job.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="bg-purple/10 p-3 rounded-lg h-fit">
-                    <i className="ti ti-wallet text-purple-900 text-2xl"></i>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Financial Impact</h3>
-                    <p className="text-gray-600">
-                      Caregivers spend an average of $7,000 per year on out-of-pocket care-related expenses.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="bg-purple/10 p-3 rounded-lg h-fit">
-                    <i className="ti ti-heart text-purple-900 text-2xl"></i>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Health Concerns</h3>
-                    <p className="text-gray-600">
-                      60% of caregivers report declining physical and mental health due to caregiving responsibilities.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 p-6 bg-purple/5 rounded-lg border border-purple/10">
-                <h3 className="text-xl font-semibold mb-4 text-purple-900">Current Policy Issues</h3>
-                <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                  <li>Paid family leave for caregivers</li>
-                  <li>Tax credits for caregiving expenses</li>
-                  <li>Expanded respite care programs</li>
-                  <li>Healthcare subsidies for caregivers</li>
-                  <li>Workplace flexibility requirements</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="bg-purple/5 p-8 rounded-lg shadow-sm border border-purple/10">
-              <h2 className="text-2xl font-bold mb-6 text-purple-900">Build Your Letter</h2>
-              <p className="text-gray-600 mb-6">
-                Look up your representative, customize the template, and copy your draft to send through email or print.
+            <div className="max-w-lg mx-auto">
+              <form onSubmit={handleSearchRepresentatives} className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 focus-within:ring-2 focus-within:ring-purple-500 transition-all mb-4" noValidate>
+                <Input
+                  type="text"
+                  value={city}
+                  onChange={(e) => {
+                    setCity(e.target.value);
+                    clearSearchError();
+                  }}
+                  onBlur={(e) => {
+                    const validation = validateCityOrConstituency(e.target.value);
+                    if (validation) {
+                      setSearchError(validation);
+                    }
+                  }}
+                  placeholder="e.g., Toronto Centre, Calgary Skyview"
+                  className="flex-1 px-4 py-3 border-none bg-transparent focus:outline-none"
+                  required
+                />
+                <Button
+                  type="submit"
+                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                  disabled={isSearching}
+                >
+                  {isSearching ? "Searching..." : "Search"}
+                </Button>
+              </form>
+              {searchError ? (
+                <Alert variant="destructive" className="mb-4 text-left">
+                  <AlertTitle>There was a problem with your search</AlertTitle>
+                  <AlertDescription>{searchError}</AlertDescription>
+                </Alert>
+              ) : null}
+              <p className="text-gray-600 text-sm">
+                Prefer to search by your postal code?{" "}
+                <a
+                  href="https://www.ourcommons.ca/members/en"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-600 hover:text-purple-800 font-semibold underline transition-colors"
+                >
+                  Click here
+                </a>
               </p>
+            </div>
+          </div>
+        </section>
 
-              <div className="space-y-5">
-                <div className="space-y-3 rounded-md border border-purple/10 bg-white/80 p-4">
-                  <h3 className="text-lg font-semibold text-purple-900">Find Your Representative</h3>
-                  <form onSubmit={handleSearchRepresentatives} className="flex flex-col sm:flex-row gap-3">
-                    <Input
-                      type="text"
-                      value={city}
-                      onChange={(event) => {
-                        clearSearchError();
-                        setCity(event.target.value);
-                      }}
-                      placeholder="Enter your city or constituency"
-                      className="flex-1"
-                    />
-                    <Button type="submit" disabled={isSearching} className="bg-purple text-white hover:bg-purple-dark">
-                      {isSearching ? "Searching..." : "Search"}
-                    </Button>
-                  </form>
-                  {searchError ? (
-                    <Alert variant="destructive" className="text-left">
-                      <AlertTitle>Unable to look up representatives</AlertTitle>
-                      <AlertDescription>{searchError}</AlertDescription>
-                    </Alert>
-                  ) : null}
-                  {searchPerformed && mpList.length === 0 && !isSearching ? (
-                    <p className="text-sm text-gray-600">
-                      No representatives were found for that area. Try a different spelling or nearby city.
-                    </p>
-                  ) : null}
-                  {mpList.length > 0 ? (
-                    <div className="space-y-2">
-                      <label htmlFor="representative" className="block text-sm font-medium text-gray-700">
-                        Select a representative
-                      </label>
-                      <select
-                        id="representative"
-                        value={selectedMpId}
-                        onChange={(event) => {
-                          clearLetterError();
-                          setSelectedMpId(event.target.value);
-                        }}
-                        className="w-full rounded-md border border-purple/20 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple"
-                        required
-                      >
-                        <option value="" disabled>
-                          Choose a representative
-                        </option>
-                        {mpList.map((mp) => (
-                          <option key={mp.id} value={mp.id}>
-                            {mp.name} — {mp.constituency} ({mp.party})
-                          </option>
-                        ))}
-                      </select>
-                      {selectedRepresentative ? (
-                        <div className="rounded-md border border-purple/10 bg-purple/10 p-3 text-sm text-purple-900">
-                          Drafting for <span className="font-semibold">{selectedRepresentative.name}</span> • {selectedRepresentative.constituency}
-                          {selectedRepresentative.province ? `, ${selectedRepresentative.province}` : ""}
-                        </div>
-                      ) : null}
+        <RunningBanner
+          items={successMessages}
+          className="bg-purple-50 text-purple-900 py-3"
+          speed={5}
+        />
+
+        {/* This section is now always rendered */}
+        <section className="py-16 px-4 sm:px-8">
+          <div className="max-w-screen-xl mx-auto">
+            {searchPerformed ? (
+              isSearching ? (
+                // Skeleton loading state
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <h2 className="text-3xl font-bold mb-8 text-purple-900 text-center col-span-full">Searching...</h2>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="p-6 bg-white rounded-xl shadow-lg">
+                      <div className="h-6 w-3/4 mb-2 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-4 w-1/2 mb-1 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-4 w-full mb-1 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-4 w-3/4 mb-4 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-10 w-full mb-2 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-10 w-full bg-purple-100 animate-pulse rounded" />
                     </div>
-                  ) : null}
+                  ))}
                 </div>
+              ) : mpList.length > 0 ? (
+                // MP cards grid
+                <>
+                  <h2 className="text-3xl font-bold mb-8 text-purple-900 text-center">Your Representatives</h2>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {mpList.map((mp) => (
+                      <div key={mp.id} className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <div className="border-b border-gray-100 pb-4 px-6 pt-6">
+                          <h3 className="text-xl font-semibold text-purple-900">{mp.name}</h3>
+                          <p className="text-sm text-gray-500">{mp.party}</p>
+                        </div>
+                        <div className="px-6 py-6 space-y-2">
+                          <p className="text-gray-700">
+                            <span className="font-medium text-gray-900">Constituency:</span> {mp.constituency}
+                          </p>
+                          <p className="text-gray-700">
+                            <span className="font-medium text-gray-900">Province:</span> {mp.province}
+                          </p>
+                          {mp.startDate ? (
+                            <p className="text-sm text-gray-500">
+                              <span className="font-medium">Serving since:</span> {mp.startDate}
+                            </p>
+                          ) : null}
+                          <div className="flex flex-col gap-2 pt-4">
+                            <Button
+                              type="button"
+                              variant={selectedMpId === mp.id ? "default" : "outline"}
+                              className={selectedMpId === mp.id ? "bg-purple-600 text-white" : ""}
+                              onClick={() => {
+                                setSelectedMpId(mp.id);
+                                clearLetterError();
+                              }}
+                            >
+                              {selectedMpId === mp.id ? "Selected" : "Use this contact"}
+                            </Button>
+                            <Button type="button" variant="secondary" onClick={handleOpenExternalLink}>
+                              View profile
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                  <h2 className="text-2xl font-semibold text-purple-900 mb-4">No representatives yet</h2>
+                  <p className="text-gray-600">
+                    Search by your city or constituency to load representatives and start drafting your letter.
+                  </p>
+                </div>
+              )
+            ) : (
+              <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                <h2 className="text-2xl font-semibold text-purple-900 mb-4">Search to get started</h2>
+                <p className="text-gray-600">
+                  Enter your city or constituency above to load representatives and build your personalized advocacy letter.
+                </p>
+              </div>
+            )}
 
-                <form onSubmit={handleGenerateLetter} className="space-y-5">
-                  <div className="grid md:grid-cols-2 gap-4">
+            <section className="mt-16 grid lg:grid-cols-2 gap-8 items-start">
+              <div className="bg-white rounded-xl shadow-lg p-8">
+                <h2 className="text-2xl font-bold text-purple-900 mb-6">Craft your letter</h2>
+                <form className="space-y-4" onSubmit={handleGenerateLetter} noValidate>
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                       Your Name
                     </label>
                     <Input
-                      type="text"
                       id="name"
                       value={name}
-                      onChange={(event) => {
+                      onChange={(e) => {
+                        setName(e.target.value);
                         clearLetterError();
-                        setName(event.target.value);
+                        setLetterFieldErrors((prev) => ({
+                          ...prev,
+                          name: prev.name ? (e.target.value.trim() ? "" : "Your name is required.") : "",
+                        }));
                       }}
-                      placeholder="e.g., Alex Morgan"
+                      onBlur={(e) =>
+                        setLetterFieldErrors((prev) => ({
+                          ...prev,
+                          name: e.target.value.trim() ? "" : "Your name is required.",
+                        }))
+                      }
                       required
                     />
+                    {letterFieldErrors.name ? (
+                      <p className="mt-1 text-sm text-red-600">{letterFieldErrors.name}</p>
+                    ) : null}
                   </div>
+
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Email
+                      Email Address
                     </label>
                     <Input
-                      type="email"
                       id="email"
+                      type="email"
                       value={email}
-                      onChange={(event) => {
+                      onChange={(e) => {
+                        setEmail(e.target.value);
                         clearLetterError();
-                        setEmail(event.target.value);
+                        setLetterFieldErrors((prev) => ({
+                          ...prev,
+                          email: prev.email ? validateEmail(e.target.value, "Email address") : "",
+                        }));
                       }}
-                      placeholder="you@example.com"
+                      onBlur={(e) =>
+                        setLetterFieldErrors((prev) => ({
+                          ...prev,
+                          email: validateEmail(e.target.value, "Email address"),
+                        }))
+                      }
                       required
                     />
+                    {letterFieldErrors.email ? (
+                      <p className="mt-1 text-sm text-red-600">{letterFieldErrors.email}</p>
+                    ) : null}
                   </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
-                      Postal Code (optional)
+                      Postal Code
                     </label>
                     <Input
-                      type="text"
                       id="postalCode"
                       value={postalCode}
-                      onChange={(event) => {
+                      onChange={(e) => {
+                        const value = e.target.value.toUpperCase();
+                        setPostalCode(value);
                         clearLetterError();
-                        setPostalCode(event.target.value);
+                        setLetterFieldErrors((prev) => ({
+                          ...prev,
+                          postalCode: prev.postalCode ? validatePostalCode(value, "Postal code") : "",
+                        }));
                       }}
-                      placeholder="e.g., M5H 2N2"
+                      onBlur={(e) =>
+                        setLetterFieldErrors((prev) => ({
+                          ...prev,
+                          postalCode: validatePostalCode(e.target.value.toUpperCase(), "Postal code"),
+                        }))
+                      }
+                      required
+                      inputMode="text"
+                      autoCapitalize="characters"
                     />
+                    {letterFieldErrors.postalCode ? (
+                      <p className="mt-1 text-sm text-red-600">{letterFieldErrors.postalCode}</p>
+                    ) : null}
                   </div>
+
                   <div>
                     <label htmlFor="customMessage" className="block text-sm font-medium text-gray-700 mb-1">
-                      Personal message (optional)
+                      Personal Story or Additional Context (optional)
                     </label>
                     <Textarea
                       id="customMessage"
                       value={customMessage}
-                      onChange={(event) => {
+                      onChange={(e) => {
+                        setCustomMessage(e.target.value);
                         clearLetterError();
-                        setCustomMessage(event.target.value);
                       }}
-                      placeholder="Share your caregiving story, local challenges, or specific requests."
-                      rows={3}
+                      placeholder="Share a short story or statistic that highlights why caregiver support matters to you."
+                      className="min-h-[120px]"
                     />
                   </div>
-                </div>
 
-                <div className="space-y-3">
-                  <label htmlFor="letterContent" className="block text-sm font-medium text-gray-700">
-                    Letter draft (editable)
-                  </label>
-                  <Textarea
-                    id="letterContent"
-                    value={letterContent}
-                    onChange={(event) => {
-                      clearLetterError();
-                      setLetterContent(event.target.value);
-                    }}
-                    rows={12}
-                    className="bg-white"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Edit the draft as needed. When you're ready, copy it into an email, print it, or paste it into your preferred messaging tool.
-                  </p>
-                </div>
+                  {letterError ? (
+                    <Alert variant="destructive">
+                      <AlertTitle>We need a bit more info</AlertTitle>
+                      <AlertDescription>{letterError}</AlertDescription>
+                    </Alert>
+                  ) : null}
 
-                {letterError ? (
-                  <Alert variant="destructive" className="text-left">
-                    <AlertTitle>Action required</AlertTitle>
-                    <AlertDescription>{letterError}</AlertDescription>
-                  </Alert>
-                ) : null}
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <Button type="submit" className="bg-purple-600 text-white">
+                      Generate letter
+                    </Button>
+                    <Button type="button" variant="outline" onClick={handleCopyDraft}>
+                      Copy draft
+                    </Button>
+                    <Button type="button" variant="secondary" onClick={handleResetDraft}>
+                      Reset template
+                    </Button>
+                  </div>
+                </form>
+              </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <Button type="submit" className="flex-1 bg-purple text-white hover:bg-purple-dark">
-                    Generate letter from template
-                  </Button>
-                  <Button type="button" variant="outline" className="flex-1 border-purple text-purple-900 hover:bg-purple/10" onClick={handleCopyLetter}>
-                    Copy draft
-                  </Button>
-                  <Button type="button" variant="ghost" className="flex-1 text-purple-900 hover:bg-purple/10" onClick={handleResetTemplate}>
-                    Reset template
-                  </Button>
-                </div>
-
-                <p className="text-xs text-gray-500">
-                  We don't send letters on your behalf. Use the draft above to reach your representative through email, social media, or mail.
+              <div className="bg-white rounded-xl shadow-lg p-8">
+                <h2 className="text-2xl font-bold text-purple-900 mb-6">Editable letter draft</h2>
+                <Textarea
+                  value={letterContent}
+                  onChange={(e) => {
+                    setLetterContent(e.target.value);
+                    clearLetterError();
+                  }}
+                  className="min-h-[400px]"
+                />
+                <p className="text-sm text-gray-500 mt-3">
+                  You can edit this draft directly. When you&apos;re ready, copy the text above and send it using your preferred communication channel.
                 </p>
-              </form>
-            </div>
+              </div>
+            </section>
           </div>
-        </div>
-      </section>
+        </section>
       </main>
-
       <Footer />
-    </>
+    </div>
   );
 };
 
