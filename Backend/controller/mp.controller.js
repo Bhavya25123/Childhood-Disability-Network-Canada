@@ -2,8 +2,16 @@ const MPContact = require("../Data/MPContact");
 
 const list = async (req, res) => {
   try {
-    const { province } = req.query;
-    const filter = province
+    const { city, constituency, province } = req.query;
+    const location = constituency || city;
+    const filter = location
+      ? {
+          $or: [
+            { constituency: new RegExp(location, "i") },
+            { Constituency: new RegExp(location, "i") },
+          ],
+        }
+      : province
       ? {
           $or: [
             { province: new RegExp(province, "i") },

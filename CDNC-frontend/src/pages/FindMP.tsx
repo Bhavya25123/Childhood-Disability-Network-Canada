@@ -16,7 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 const FindMP = () => {
-  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
   const [mpList, setMpList] = useState<MPContact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -37,7 +37,7 @@ const FindMP = () => {
     setMpList([]);
 
     try {
-      const res = await api.get("/mps", { params: { province } });
+      const res = await api.get("/mps", { params: { constituency: city } });
       if (res.data.length === 0) {
         toast({
           title: "No Representatives Found",
@@ -90,9 +90,9 @@ const FindMP = () => {
               <form onSubmit={handleSearch} className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 focus-within:ring-2 focus-within:ring-purple-500 transition-all mb-4">
                 <Input
                   type="text"
-                  value={province}
-                  onChange={(e) => setProvince(e.target.value)}
-                  placeholder="e.g., Ontario, Quebec"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="e.g., Toronto Centre, Calgary Skyview"
                   className="flex-1 px-4 py-3 border-none bg-transparent focus:outline-none"
                   required
                 />
@@ -100,12 +100,17 @@ const FindMP = () => {
                   Search
                 </Button>
               </form>
-              <p className="text-gray-600 text-sm">
-                Prefer to search by your postal code?{" "}
-                <a href="https://www.ourcommons.ca/members/en" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-800 font-semibold underline transition-colors">
-                  Click here
-                </a>
-              </p>
+                <p className="text-gray-600 text-sm">
+                  Prefer to search by your postal code?{" "}
+                  <a
+                    href="https://www.ourcommons.ca/members/en"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-600 hover:text-purple-800 font-semibold underline transition-colors"
+                  >
+                    Click here
+                  </a>
+                </p>
             </div>
           </div>
         </section>
@@ -176,18 +181,18 @@ const FindMP = () => {
               ) : (
                 // No results state
                 <div className="text-center py-20">
-                  <h3 className="text-2xl font-semibold text-gray-700 mb-4">No MPs Found</h3>
+                  <h3 className="text-2xl font-semibold text-gray-700 mb-4">No Representatives Found</h3>
                   <p className="text-gray-500 max-w-md mx-auto">
-                    We couldn't find any representatives for the provided province. Please double-check your input and try again.
+                    We couldn't find any representatives for the provided city or constituency. Please double-check your input and try again.
                   </p>
                 </div>
               )
             ) : (
               // Initial state message before any search is performed
               <div className="text-center py-20">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Find Your MP by Province</h3>
+                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Find Your MP by City or Constituency</h3>
                 <p className="text-gray-500 max-w-md mx-auto">
-                  Enter a province or territory in the search bar above to find your local representatives and get involved in advocacy.
+                  Enter your city or constituency in the search bar above to find your local representatives and get involved in advocacy.
                 </p>
               </div>
             )}
