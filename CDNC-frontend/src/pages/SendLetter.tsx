@@ -93,6 +93,12 @@ const SendLetter = () => {
     }
   };
 
+  /**
+   * Builds a tailored letter draft using the template pieces and the
+   * representative/constituent details entered in the form. The result is
+   * written directly into the editable textarea so the user can continue to
+   * tweak their copy before sharing it elsewhere.
+   */
   const handleGenerateLetter = (event: FormEvent) => {
     event.preventDefault();
 
@@ -156,6 +162,11 @@ const SendLetter = () => {
     });
   };
 
+  /**
+   * Copies the current draft (template-generated or hand-edited) to the
+   * clipboard. Users can then paste the message into email, print dialogs, or
+   * any other channel they prefer to send through.
+   */
   const handleCopyLetter = async () => {
     if (!letterContent.trim()) {
       toast({
@@ -180,6 +191,10 @@ const SendLetter = () => {
     }
   };
 
+  /**
+   * Restores the original template text so the user can start over without
+   * refreshing the page or manually deleting their draft.
+   */
   const handleResetTemplate = () => {
     setLetterContent(defaultLetterTemplate);
     toast({
