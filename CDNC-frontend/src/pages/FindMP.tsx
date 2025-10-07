@@ -16,6 +16,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getErrorMessage, logError } from "@/utils/error";
 import { validateCityOrConstituency } from "@/utils/validation";
+import { Copy, User } from "lucide-react";
 
 const FindMP = () => {
   const [city, setCity] = useState("");
@@ -203,7 +204,7 @@ const FindMP = () => {
                           </p>
                           {mp.startDate && (
                             <p className="text-sm text-gray-500">
-                              <span className="font-medium">Serving since:</span> {mp.startDate}
+                              <span className="font-medium">Serving since:</span> {mp.startDate.split(" ")[0]}
                             </p>
                           )}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4">
@@ -212,7 +213,7 @@ const FindMP = () => {
                               className="bg-purple-600 text-white hover:bg-purple-700"
                               onClick={() => handleOpenExternalLink()}
                             >
-                              View Profile
+                              <User/> View Profile
                             </Button>
                             <Button
                               type="button"
@@ -239,7 +240,7 @@ const FindMP = () => {
                                   });
                               }}
                             >
-                              Copy Details
+                              <Copy/>Copy Details
                             </Button>
                           </div>
                         </CardContent>
