@@ -46,11 +46,6 @@ const FindMP = () => {
     const validationMessage = validateCityOrConstituency(city);
     if (validationMessage) {
       setErrorMessage(validationMessage);
-      toast({
-        title: "Update your city",
-        description: validationMessage,
-        variant: "destructive",
-      });
       return;
     }
 
@@ -115,7 +110,7 @@ const FindMP = () => {
             <div className="max-w-lg mx-auto">
               <form
                 onSubmit={handleSearch}
-                className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 focus-within:ring-2 focus-within:ring-purple-500 transition-all mb-4"
+                className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 transition-all mb-4"
                 noValidate
               >
                 <Input
@@ -141,7 +136,7 @@ const FindMP = () => {
                 </Button>
               </form>
               {errorMessage ? (
-                <Alert variant="destructive" className="mb-4 text-left">
+                <Alert variant="destructive" className="mb-4 bg-white border-purple-400 text-left">
                   <AlertTitle>There was a problem with your search</AlertTitle>
                   <AlertDescription>{errorMessage}</AlertDescription>
                 </Alert>

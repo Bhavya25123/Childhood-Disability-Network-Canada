@@ -10,6 +10,9 @@ import api from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getErrorMessage, logError } from "@/utils/error";
 import { validateCityOrConstituency, validateEmail, validatePostalCode } from "@/utils/validation";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Mail, Copy, RotateCw, Send  } from "lucide-react";
+
 
 interface MPContact {
   id: string;
@@ -113,6 +116,7 @@ const SendLetter = () => {
         toast({
           title: "No representatives found",
           description: "We couldn't find matches for that city or constituency. Try a nearby area or verify the spelling.",
+          className: "bg-purple-600 text-white border border-purple-700"
         });
       }
       setMpList(res.data);
@@ -236,26 +240,28 @@ const SendLetter = () => {
     });
   };
 
-  const handleOpenExternalLink = () => {
-    window.open("https://www.ourcommons.ca/members/en", "_blank", "noopener,noreferrer");
+  const handleOpenMail = () => {
+    window.location.href = `mailto:?subject=Enter Subject Line&body=${encodeURIComponent(letterContent)}`;
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-grow pt-16">
-        {/* Hero Section with Search Form */}
-        <section className="bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 py-20 px-4 sm:px-8">
-          <div className="max-w-screen-xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-purple-900">
-              Find Your MP
+        {/* Page Header */}
+        <section className="bg-purple-100 border-b border-gray-200 py-8 px-4 sm:px-8">
+          <div className="max-w-screen-xl mx-auto">
+            <h1 className="text-3xl font-bold text-purple-900 mb-2">
+              Send Letter to Your MP
             </h1>
-            <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10">
-              Easily connect with your local Member of Parliament to advocate for caregiver support and make a difference in your community.
+            <p className="text-gray-600 mb-6">
+              Connect with your representative to advocate for caregiver support in your community.
             </p>
-
-            <div className="max-w-lg mx-auto">
-              <form onSubmit={handleSearchRepresentatives} className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 focus-within:ring-2 focus-within:ring-purple-500 transition-all mb-4" noValidate>
+            
+            {/* Compact MP Search */}
+            <div className="bg-gray-50 rounded-lg p-4 max-w-2xl ">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Find Your Representative</h2>
+              <form onSubmit={handleSearchRepresentatives} className="flex gap-2 mb-3" noValidate>
                 <Input
                   type="text"
                   value={city}
@@ -269,127 +275,107 @@ const SendLetter = () => {
                       setSearchError(validation);
                     }
                   }}
-                  placeholder="e.g., Toronto Centre, Calgary Skyview"
-                  className="flex-1 px-4 py-3 border-none bg-transparent focus:outline-none"
+                  placeholder="Enter city or constituency (e.g., Toronto Centre)"
+                  className="flex-1"
                   required
                 />
                 <Button
                   type="submit"
-                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                  className="bg-purple-600 text-white hover:bg-purple-700 transition-colors"
                   disabled={isSearching}
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
               </form>
+              
               {searchError ? (
-                <Alert variant="destructive" className="mb-4 text-left">
-                  <AlertTitle>There was a problem with your search</AlertTitle>
+                <Alert variant="destructive" className="mb-3">
                   <AlertDescription>{searchError}</AlertDescription>
                 </Alert>
               ) : null}
-              <p className="text-gray-600 text-sm">
-                Prefer to search by your postal code?{" "}
+              
+              <p className="text-sm text-gray-500 mx-1">
+                Or search by postal code at{" "}
                 <a
                   href="https://www.ourcommons.ca/members/en"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-purple-600 hover:text-purple-800 font-semibold underline transition-colors"
+                  className="text-purple-600 hover:text-purple-800 underline"
                 >
-                  Click here
+                  ourcommons.ca
                 </a>
               </p>
             </div>
           </div>
         </section>
 
-        <RunningBanner
-          items={successMessages}
-          className="bg-purple-50 text-purple-900 py-3"
-          speed={5}
-        />
-
-        {/* This section is now always rendered */}
-        <section className="py-16 px-4 sm:px-8">
+        {/* MP Results & Letter Section */}
+        <section className="py-8 px-4 sm:px-8">
           <div className="max-w-screen-xl mx-auto">
-            {searchPerformed ? (
-              isSearching ? (
-                // Skeleton loading state
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <h2 className="text-3xl font-bold mb-8 text-purple-900 text-center col-span-full">Searching...</h2>
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="p-6 bg-white rounded-xl shadow-lg">
-                      <div className="h-6 w-3/4 mb-2 bg-purple-100 animate-pulse rounded" />
-                      <div className="h-4 w-1/2 mb-1 bg-purple-100 animate-pulse rounded" />
-                      <div className="h-4 w-full mb-1 bg-purple-100 animate-pulse rounded" />
-                      <div className="h-4 w-3/4 mb-4 bg-purple-100 animate-pulse rounded" />
-                      <div className="h-10 w-full mb-2 bg-purple-100 animate-pulse rounded" />
-                      <div className="h-10 w-full bg-purple-100 animate-pulse rounded" />
+            
+            {/* MP Results - Compact Display */}
+            {searchPerformed && (
+              <div className="mb-8">
+                {isSearching ? (
+                  <div className="bg-white rounded-lg border border-gray-200 p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-4 w-4 bg-purple-200 animate-pulse rounded"></div>
+                      <span className="text-gray-600">Searching for representatives...</span>
                     </div>
-                  ))}
-                </div>
-              ) : mpList.length > 0 ? (
-                // MP cards grid
-                <>
-                  <h2 className="text-3xl font-bold mb-8 text-purple-900 text-center">Your Representatives</h2>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {mpList.map((mp) => (
-                      <div key={mp.id} className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
-                        <div className="border-b border-gray-100 pb-4 px-6 pt-6">
-                          <h3 className="text-xl font-semibold text-purple-900">{mp.name}</h3>
-                          <p className="text-sm text-gray-500">{mp.party}</p>
-                        </div>
-                        <div className="px-6 py-6 space-y-2">
-                          <p className="text-gray-700">
-                            <span className="font-medium text-gray-900">Constituency:</span> {mp.constituency}
-                          </p>
-                          <p className="text-gray-700">
-                            <span className="font-medium text-gray-900">Province:</span> {mp.province}
-                          </p>
-                          {mp.startDate ? (
-                            <p className="text-sm text-gray-500">
-                              <span className="font-medium">Serving since:</span> {mp.startDate}
+                  </div>
+                ) : mpList.length > 0 ? (
+                  <div className="bg-white rounded-lg border border-gray-200">
+                    <div className="border-b border-gray-200 px-4 py-3">
+                      <h3 className="text-lg font-semibold text-gray-900">Select Your Representative</h3>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      {mpList.map((mp) => (
+                        <div 
+                          key={mp.id} 
+                          className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                            selectedMpId === mp.id 
+                              ? 'border-purple-300 bg-purple-50' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => {
+                            setSelectedMpId(mp.id);
+                            clearLetterError();
+                          }}
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium text-gray-900">{mp.name}</h4>
+                              <span className="text-sm text-gray-500">({mp.party})</span>
+                            </div>
+                            <p className="text-sm text-gray-600">
+                              {mp.constituency}, {mp.province}
                             </p>
-                          ) : null}
-                          <div className="flex flex-col gap-2 pt-4">
-                            <Button
-                              type="button"
-                              variant={selectedMpId === mp.id ? "default" : "outline"}
-                              className={selectedMpId === mp.id ? "bg-purple-600 text-white" : ""}
-                              onClick={() => {
-                                setSelectedMpId(mp.id);
-                                clearLetterError();
-                              }}
-                            >
-                              {selectedMpId === mp.id ? "Selected" : "Use this contact"}
-                            </Button>
-                            <Button type="button" variant="secondary" onClick={handleOpenExternalLink}>
-                              View profile
-                            </Button>
+                          </div>
+                          <div className="ml-4">
+                            {selectedMpId === mp.id ? (
+                              <div className="w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center">
+                                <div className="w-2 h-2 bg-white rounded-full"></div>
+                              </div>
+                            ) : (
+                              <div className="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </>
-              ) : (
-                <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-                  <h2 className="text-2xl font-semibold text-purple-900 mb-4">No representatives yet</h2>
-                  <p className="text-gray-600">
-                    Search by your city or constituency to load representatives and start drafting your letter.
-                  </p>
-                </div>
-              )
-            ) : (
-              <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-                <h2 className="text-2xl font-semibold text-purple-900 mb-4">Search to get started</h2>
-                <p className="text-gray-600">
-                  Enter your city or constituency above to load representatives and build your personalized advocacy letter.
-                </p>
+                ) : (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-yellow-800">
+                      No representatives found for that search. Try a nearby city or verify the spelling.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
-            <section className="mt-16 grid lg:grid-cols-2 gap-8 items-start">
-              <div className="bg-white rounded-xl shadow-lg p-8">
+            <section className="grid lg:grid-cols-2 gap-5 items-start">
+              <div className="bg-white rounded-xl shadow-lg p-7">
                 <h2 className="text-2xl font-bold text-purple-900 mb-6">Craft your letter</h2>
                 <form className="space-y-4" onSubmit={handleGenerateLetter} noValidate>
                   <div>
@@ -503,21 +489,36 @@ const SendLetter = () => {
                     </Alert>
                   ) : null}
 
-                  <div className="flex flex-wrap gap-3 pt-2">
+                  <div className="flex-wrap gap-4 pt-2">
                     <Button type="submit" className="bg-purple-600 text-white">
-                      Generate letter
+                      <Mail /> Generate letter
                     </Button>
-                    <Button type="button" variant="outline" onClick={handleCopyDraft}>
-                      Copy draft
+                    <Button type="button" variant="ghost" onClick={handleCopyDraft}>
+                      <Copy /> Copy draft
                     </Button>
                     <Button type="button" variant="secondary" onClick={handleResetDraft}>
-                      Reset template
+                      <RotateCw /> Reset template
                     </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                            type="button"
+                            className=" border border-purple-400"
+                            onClick={handleOpenMail}>
+                            <Send /> Send Email
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Send email
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </form>
               </div>
 
-              <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="bg-white rounded-xl shadow-lg p-7">
                 <h2 className="text-2xl font-bold text-purple-900 mb-6">Editable letter draft</h2>
                 <Textarea
                   value={letterContent}
