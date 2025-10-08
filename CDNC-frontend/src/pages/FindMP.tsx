@@ -13,13 +13,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getErrorMessage, logError } from "@/utils/error";
+import { validateCityOrConstituency } from "@/utils/validation";
+import { Copy, User } from "lucide-react";
 
 const FindMP = () => {
-  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
   const [mpList, setMpList] = useState<MPContact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   interface MPContact {
     id: string;
@@ -28,16 +32,33 @@ const FindMP = () => {
     constituency: string;
     province: string;
     startDate?: string;
+    email?: string;
+    sourceUrl?: string;
   }
+
+  const handleCityChange = (value: string) => {
+    setCity(value);
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationMessage = validateCityOrConstituency(city);
+    if (validationMessage) {
+      setErrorMessage(validationMessage);
+      return;
+    }
+
     setIsLoading(true);
     setSearchPerformed(true);
     setMpList([]);
+    setErrorMessage(null);
 
     try {
-      const res = await api.get("/mps", { params: { province } });
+      const res = await api.get("/mps", { params: { constituency: city } });
       if (res.data.length === 0) {
         toast({
           title: "No Representatives Found",
@@ -46,9 +67,12 @@ const FindMP = () => {
       }
       setMpList(res.data);
     } catch (err) {
+      const message = getErrorMessage(err, "Unable to load MP contacts. Please try again later.");
+      logError("FindMP", err);
+      setErrorMessage(message);
       toast({
         title: "Search Failed",
-        description: "Unable to load MP contacts. Please try again later.",
+        description: message,
         variant: "destructive",
       });
       setMpList([]);
@@ -65,7 +89,7 @@ const FindMP = () => {
     "Government increases funding for caregiver mental health services",
     "New legislation passed to protect caregiver employment rights",
     "Community-led initiative receives government grant for respite care",
-    "MP promotes national awareness campaign for caregiver burnout"
+    "MP promotes national awareness campaign for caregiver burnout",
   ];
 
   const handleOpenExternalLink = () => {
@@ -87,22 +111,47 @@ const FindMP = () => {
             </p>
 
             <div className="max-w-lg mx-auto">
-              <form onSubmit={handleSearch} className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 focus-within:ring-2 focus-within:ring-purple-500 transition-all mb-4">
+              <form
+                onSubmit={handleSearch}
+                className="flex gap-2 bg-white p-2 rounded-xl shadow-lg border border-gray-200 transition-all mb-4"
+                noValidate
+              >
                 <Input
                   type="text"
-                  value={province}
-                  onChange={(e) => setProvince(e.target.value)}
-                  placeholder="e.g., Ontario, Quebec"
+                  value={city}
+                  onChange={(e) => handleCityChange(e.target.value)}
+                  onBlur={(e) => {
+                    const validation = validateCityOrConstituency(e.target.value);
+                    if (validation) {
+                      setErrorMessage(validation);
+                    }
+                  }}
+                  placeholder="e.g., Toronto Centre, Calgary Skyview"
                   className="flex-1 px-4 py-3 border-none bg-transparent focus:outline-none"
                   required
                 />
-                <Button type="submit" className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
-                  Search
+                <Button
+                  type="submit"
+                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Searching..." : "Search"}
                 </Button>
               </form>
+              {errorMessage ? (
+                <Alert variant="destructive" className="mb-4 bg-white border-purple-400 text-left">
+                  <AlertTitle>There was a problem with your search</AlertTitle>
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              ) : null}
               <p className="text-gray-600 text-sm">
                 Prefer to search by your postal code?{" "}
-                <a href="https://www.ourcommons.ca/members/en" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-800 font-semibold underline transition-colors">
+                <a
+                  href="https://www.ourcommons.ca/members/en"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-600 hover:text-purple-800 font-semibold underline transition-colors"
+                >
                   Click here
                 </a>
               </p>
@@ -126,12 +175,12 @@ const FindMP = () => {
                   <h2 className="text-3xl font-bold mb-8 text-purple-900 text-center col-span-full">Searching...</h2>
                   {[...Array(3)].map((_, i) => (
                     <Card key={i} className="p-6">
-                      <Skeleton className="h-6 w-3/4 mb-2" />
-                      <Skeleton className="h-4 w-1/2 mb-1" />
-                      <Skeleton className="h-4 w-full mb-1" />
-                      <Skeleton className="h-4 w-3/4 mb-4" />
-                      <Skeleton className="h-10 w-full mb-2" />
-                      <Skeleton className="h-10 w-full" />
+                      <div className="h-6 w-3/4 mb-2 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-4 w-1/2 mb-1 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-4 w-full mb-1 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-4 w-3/4 mb-4 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-10 w-full mb-2 bg-purple-100 animate-pulse rounded" />
+                      <div className="h-10 w-full bg-purple-100 animate-pulse rounded" />
                     </Card>
                   ))}
                 </div>
@@ -155,17 +204,49 @@ const FindMP = () => {
                           <p className="text-gray-700">
                             <span className="font-medium text-gray-900">Province:</span> {mp.province}
                           </p>
+                          <p className="text-sm text-gray-500">
+                              <span className="font-medium">Email:</span> {mp.email}
+                            </p>
                           {mp.startDate && (
                             <p className="text-sm text-gray-500">
-                              <span className="font-medium">Serving since:</span> {mp.startDate}
+                              <span className="font-medium">Serving since:</span> {mp.startDate.split(" ")[0]}
                             </p>
+                            
                           )}
-                          <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                            <Button onClick={handleOpenExternalLink} variant="outline" className="flex-1 border-purple-600 text-purple-900 hover:bg-purple-600 hover:text-white transition-colors">
-                              Contact MP
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4">
+                            <Button
+                              type="button"
+                              className="bg-purple-600 text-white hover:bg-purple-700"
+                              onClick={() => window.open(`${mp.sourceUrl}`, "_blank", "noopener,noreferrer")}
+                            >
+                              <User/> View Profile
                             </Button>
-                            <Button onClick={handleOpenExternalLink} variant="outline" className="flex-1 border-purple-600 text-purple-900 hover:bg-purple-600 hover:text-white transition-colors">
-                              Schedule Meeting
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="border-purple-200 text-purple-700 hover:bg-purple-50"
+                              onClick={() => {
+                                navigator.clipboard
+                                  .writeText(
+                                    `Name: ${mp.name}\nParty: ${mp.party}\nConstituency: ${mp.constituency}\nProvince: ${mp.province}`
+                                  )
+                                  .then(() =>
+                                    toast({
+                                      title: "Details copied",
+                                      description: "Representative contact details copied to your clipboard.",
+                                    })
+                                  )
+                                  .catch((err) => {
+                                    logError("FindMP:copy", err);
+                                    toast({
+                                      title: "Copy failed",
+                                      description: "Please copy the details manually.",
+                                      variant: "destructive",
+                                    });
+                                  });
+                              }}
+                            >
+                              <Copy/>Copy Details
                             </Button>
                           </div>
                         </CardContent>
@@ -174,20 +255,18 @@ const FindMP = () => {
                   </div>
                 </>
               ) : (
-                // No results state
-                <div className="text-center py-20">
-                  <h3 className="text-2xl font-semibold text-gray-700 mb-4">No MPs Found</h3>
-                  <p className="text-gray-500 max-w-md mx-auto">
-                    We couldn't find any representatives for the provided province. Please double-check your input and try again.
+                <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                  <h2 className="text-2xl font-semibold text-purple-900 mb-4">No representatives found</h2>
+                  <p className="text-gray-600">
+                    Try adjusting your city or constituency and search again to see who represents you.
                   </p>
                 </div>
               )
             ) : (
-              // Initial state message before any search is performed
-              <div className="text-center py-20">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Find Your MP by Province</h3>
-                <p className="text-gray-500 max-w-md mx-auto">
-                  Enter a province or territory in the search bar above to find your local representatives and get involved in advocacy.
+              <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                <h2 className="text-2xl font-semibold text-purple-900 mb-4">Search to get started</h2>
+                <p className="text-gray-600">
+                  Enter your city or constituency above to discover your local representatives and their contact information.
                 </p>
               </div>
             )}

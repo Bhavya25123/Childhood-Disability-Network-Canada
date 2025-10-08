@@ -26,6 +26,26 @@ app.use("/api/auth", authRoutes);
 app.use("/api/mps", mpRoutes);
 app.use("/api/members", memberRoutes);
 
+// 404 handler for unknown routes
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) {
+    return res.status(404).json({ error: "Resource not found" });
+  }
+  return next();
+});
+
+// Centralized error handler
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error("❌ Unexpected server error:", err);
+  const status = err.status || 500;
+  const message =
+    typeof err.message === "string" && err.message
+      ? err.message
+      : "An unexpected error occurred";
+  res.status(status).json({ error: message });
+});
+
 // MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
