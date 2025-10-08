@@ -21,6 +21,7 @@ interface MPContact {
   constituency: string;
   province: string;
   startDate?: string;
+  email?: string;
 }
 
 const defaultLetterTemplate = `Dear [Representative Name],
@@ -241,7 +242,11 @@ const SendLetter = () => {
   };
 
   const handleOpenMail = () => {
-    window.location.href = `mailto:?subject=Enter Subject Line&body=${encodeURIComponent(letterContent)}`;
+    const representative = selectedRepresentative;
+  const mailto = representative?.email
+    ? `mailto:${representative.email}?subject=Advocacy Letter&body=${encodeURIComponent(letterContent)}`
+    : `mailto:?subject=Advocacy Letter&body=${encodeURIComponent(letterContent)}`;
+  window.location.href = mailto;
   };
 
   return (
@@ -350,6 +355,19 @@ const SendLetter = () => {
                             <p className="text-sm text-gray-600">
                               {mp.constituency}, {mp.province}
                             </p>
+                            {mp.email ? (
+                              <p className="text-sm text-purple-700 mt-1">
+                                <span className="font-medium text-gray-900">Email:</span>{" "}
+                                <a
+                                  href={`mailto:${mp.email}`}
+                                  className="text-purple-700 underline hover:text-purple-900"
+                                >
+                                  {mp.email}
+                                </a>
+                              </p>
+                            ) : (
+                              <p className="text-sm text-gray-500 mt-1">No email available</p>
+                            )}
                           </div>
                           <div className="ml-4">
                             {selectedMpId === mp.id ? (
