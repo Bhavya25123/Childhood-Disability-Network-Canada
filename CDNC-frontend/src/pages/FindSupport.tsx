@@ -7,52 +7,52 @@ import { Heart, LifeBuoy, Phone, MapPin, Mail, HelpCircle } from "lucide-react";
 const FindSupport = () => {
   const supportServices = [
     {
-      title: "Crisis Hotline",
-      description: "24/7 support for caregivers in crisis situations",
+      title: "Ontario Special Needs Helpline",
+      description: "24/7 support for families with children with disabilities",
       icon: <Phone className="h-8 w-8 text-purple-900" />,
-      contactInfo: "1-800-555-HELP",
+      contactInfo: "1-888-444-4626",
     },
     {
-      title: "Counseling Services",
-      description: "Professional counseling for emotional support",
+      title: "ErinoakKids Centre (Oakville)",
+      description: "Treatment and rehabilitation services for children",
       icon: <Heart className="h-8 w-8 text-purple-900" />,
-      contactInfo: "counseling@caresupport.org",
+      contactInfo: "905-855-2690",
     },
     {
-      title: "Local Support Groups",
-      description: "Connect with other caregivers in your area",
+      title: "Ron Joyce Children's Health Centre (Hamilton)",
+      description: "Specialized pediatric services for developmental conditions",
       icon: <MapPin className="h-8 w-8 text-purple-900" />,
-      contactInfo: "Find your local group",
+      contactInfo: "905-521-2100",
     },
     {
-      title: "Financial Assistance",
-      description: "Resources for financial support and planning",
+      title: "Ontario Disability Support Program",
+      description: "Financial assistance for children with disabilities",
       icon: <LifeBuoy className="h-8 w-8 text-purple-900" />,
-      contactInfo: "finance@caresupport.org",
+      contactInfo: "1-800-263-5960",
     },
     {
-      title: "Online Resources",
-      description: "Educational materials and guides",
+      title: "Burlington Accessibility Advisory Committee",
+      description: "Local resources and support in Burlington",
       icon: <HelpCircle className="h-8 w-8 text-purple-900" />,
-      contactInfo: "resources.caresupport.org",
+      contactInfo: "905-335-7600 ext. 7865",
     },
     {
-      title: "Email Support",
-      description: "Send us your questions and concerns",
+      title: "Reach Out Centre for Kids (ROCK)",
+      description: "Mental health services for children and youth",
       icon: <Mail className="h-8 w-8 text-purple-900" />,
-      contactInfo: "help@caresupport.org",
+      contactInfo: "289-266-0036",
     },
   ];
 
   const runningBannerItems = [
-    "24/7 Crisis Support Available",
-    "Join a Local Support Group Today",
-    "Financial Resources for Caregivers",
-    "Download Our Free Caregiving Guide",
-    "Virtual Support Sessions Every Tuesday",
-    "One-on-One Counseling Available",
-    "Emergency Respite Care Services",
-    "Caregiver Wellness Workshops",
+    "Ontario Special Needs Helpline: 1-888-444-4626",
+    "Assistance for Children with Severe Disabilities (ACSD) Program",
+    "Respite Services in Hamilton: 905-521-2100",
+    "ErinoakKids Centre Oakville Services Available",
+    "Ontario Autism Program Support Line: 1-888-284-8340",
+    "Burlington Pediatric Therapy Options",
+    "Hamilton-Wentworth District School Board Special Education: 905-527-5092",
+    "Halton Region Children's Developmental Services: 905-825-6000",
   ];
 
   return (

@@ -8,6 +8,7 @@ const mpContactSchema = new mongoose.Schema(
   "Province / Territory": String,
   "Political Affiliation": String,
   "Start Date": String,
+  "Email": String,
 }, { collection: "MPContacts" });
 
 module.exports = mongoose.model("MPContact", mpContactSchema);

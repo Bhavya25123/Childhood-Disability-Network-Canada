@@ -32,6 +32,8 @@ const FindMP = () => {
     constituency: string;
     province: string;
     startDate?: string;
+    email?: string;
+    sourceUrl?: string;
   }
 
   const handleCityChange = (value: string) => {
@@ -202,16 +204,20 @@ const FindMP = () => {
                           <p className="text-gray-700">
                             <span className="font-medium text-gray-900">Province:</span> {mp.province}
                           </p>
+                          <p className="text-sm text-gray-500">
+                              <span className="font-medium">Email:</span> {mp.email}
+                            </p>
                           {mp.startDate && (
                             <p className="text-sm text-gray-500">
                               <span className="font-medium">Serving since:</span> {mp.startDate.split(" ")[0]}
                             </p>
+                            
                           )}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4">
                             <Button
                               type="button"
                               className="bg-purple-600 text-white hover:bg-purple-700"
-                              onClick={() => handleOpenExternalLink()}
+                              onClick={() => window.open(`${mp.sourceUrl}`, "_blank", "noopener,noreferrer")}
                             >
                               <User/> View Profile
                             </Button>
