@@ -11,7 +11,7 @@ const AdvocacyHub = () => {
       <Header />
       <main className="flex-grow pt-16">
         {/* Hero Section */}
-        <section className="bg-purple-light/30 py-16 px-8">
+        <section className="bg-gray-50 py-16 px-8">
           <div className="max-w-screen-xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-6">Advocacy Hub</h1>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
@@ -19,13 +19,18 @@ const AdvocacyHub = () => {
               Together, we can make a difference.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild className="bg-purple hover:bg-purple-dark font-bold">
-                <Link to="/find-mp">
+              <Button asChild className="bg-purple hover:bg-purple-dark font-bold ">
+                <Link to="/find-mp"
+                className="items-center justify-center gap-3
+                 bg-purple-900 hover:bg-purple-800 hover:text-white text-white
+                 hover:shadow-xl hover:scale-105">
+                  <i className="ti ti-search text-xl" />
                   <Vote className="mr-2" />
-                  Find Your MP
+                  <span>Find Your MP</span>
+                  <i className="ti ti-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="border-purple text-purple-900 hover:bg-purple-dark font-bold">
+              <Button asChild variant="outline" className="border-gray-700 text-purple-900 hover:bg-purple-dark font-bold">
                 <Link to="/send-letter">
                   <Mail className="mr-2" />
                   Send Advocacy Letter
@@ -36,7 +41,7 @@ const AdvocacyHub = () => {
         </section>
 
         {/* Current Campaigns */}
-        <section className="py-16 px-4">
+        <section className="bg-gray-50 py-16 px-4">
           <div className="max-w-screen-xl mx-auto">
             <h2 className="text-3xl font-bold text-purple-900 mb-8 text-center">Current Campaigns</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -77,11 +82,11 @@ const AdvocacyHub = () => {
         </section>
 
         {/* Get Involved */}
-        <section className="bg-gray-50 py-16 px-4">
+        <section className="bg-gray-100 py-16 px-4">
           <div className="max-w-screen-xl mx-auto">
             <h2 className="text-3xl font-bold text-purple-900 mb-8 text-center">Ways to Get Involved</h2>
             <div className="grid md:grid-cols-2 gap-8">
-              <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
+              <Card className="p-6 shadow-md bg-gray-50 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold mb-4 flex items-center">
                   <Vote className="text-purple-900 mr-2" />
                   Contact Your Representatives
@@ -90,12 +95,12 @@ const AdvocacyHub = () => {
                   Reach out to your local representatives to express your support for caregiver-friendly policies.
                   Your voice matters in shaping legislation that affects caregivers.
                 </p>
-                <Button asChild className="bg-purple hover:bg-purple-dark w-full mt-2">
+                <Button asChild className="bg-purple-900 text-white hover:bg-purple-800 hover:text-white flex">
                   <Link to="/find-mp">Find Your MP</Link>
                 </Button>
               </Card>
               
-              <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
+              <Card className="p-6 shadow-md bg-gray-50 hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold mb-4 flex items-center">
                   <Users className="text-purple-900 mr-2" />
                   Join Our Community
@@ -104,7 +109,7 @@ const AdvocacyHub = () => {
                   Connect with other caregivers and advocates who are passionate about improving support for caregivers.
                   Share your story and learn from others.
                 </p>
-                <Button asChild className="bg-purple hover:bg-purple-dark w-full mt-2">
+                <Button asChild className="bg-purple-900 text-white hover:bg-purple-800 hover:text-white w-full mt-6">
                   <Link to="/join-community">Join Now</Link>
                 </Button>
               </Card>
