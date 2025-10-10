@@ -1,83 +1,39 @@
-// describe("Sign In Page", () => {
-//     beforeEach(() => {
-//       cy.visit("/sign-in"); // adjust path if needed
-      
-//     });
-  
-//     it("should display the Sign In page correctly", () => {
-//       // Check page heading
-//       cy.contains("Welcome Back").should("be.visible");
-  
-//       // Check subheading
-//       cy.contains("Sign in to access your caregiver resources and community").should("be.visible");
-  
-//       // Check input fields
-//       cy.get('[data-lov-id="src/pages/SignIn.tsx:50:14"] > .block')
-//       cy.get('#email');
-//       cy.get('[data-lov-id="src/pages/SignIn.tsx:64:14"] > .block')
-//       cy.get('#password')
-//       // Check buttons/links
-//       cy.contains("Log In").should("be.visible");
-//      // cy.contains("Create Account").should("be.visible");
-//     });
-  
-//     it("should allow entering email and password", () => {
-//       cy.get('#email').type("b@gmail.com");
-//       cy.get('#password').type("a");
-  
-//       // Verify text entered
-//       cy.get('#email').should("have.value", "b@gmail.com");
-//       cy.get('#password').should("have.value", "a");
-//     });
-  
-//     it("should click Log In button", () => {
-//       cy.get('#email').type("b@gmail.com");
-//       cy.get('#password').type("a");
-  
-//       cy.contains("Log In").click();
-//      cy.visit("/");
-//     });
+describe("Sign In Page", () => {
+  beforeEach(() => {
+    cy.visit("/sign-in");
+  });
 
-  
-//      it("should navigate to Create Account page when clicked", () => {
-//         cy.get('.text-purple-600').click();
-//         cy.url().should("include", "/sign-up"); 
+  it("shows validation errors when required fields are empty", () => {
+    cy.contains("Log In").click();
 
-//         cy.get('[data-lov-id="src/pages/SignUp.tsx:55:14"] > .block')
-//         cy.get('#fullName')
-//         cy.get('#fullName').type("BhavyaShah");
-//         cy.get('#fullName').should("have.value", "BhavyaShah");
+    cy.get("#email").siblings("p").should("contain", "Email");
+    cy.get("#password").siblings("p").should("contain", "Password");
+  });
 
+  it("submits credentials and stores the session", () => {
+    cy.intercept("POST", "**/auth/login", {
+      statusCode: 200,
+      body: {
+        token: "jwt-token",
+        email: "test@example.com",
+        fullName: "Test User",
+      },
+    }).as("loginRequest");
 
-        
-//         cy.get('[data-lov-id="src/pages/SignUp.tsx:55:14"] > .block')
-//         cy.get('#email')
-//         cy.get('#email').type("bhavy@gmail.com");
-//         cy.get('#email').should("have.value", "bhavy@gmail.com");
+    cy.get("#email").type("test@example.com");
+    cy.get("#password").type("Password1");
+    cy.contains("Log In").click();
 
-//         cy.get('[data-lov-id="src/pages/SignUp.tsx:84:16"] > .block')
-//         cy.get('#city')
-//         cy.get('#city').type("Oakville");
-//         cy.get('#city').should("have.value", "Oakville");
+    cy.wait("@loginRequest");
+    cy.url().should("eq", `${Cypress.config("baseUrl")}/`);
+    cy.window().its("localStorage").invoke("getItem", "token").should("eq", "jwt-token");
+    cy.window().its("localStorage").invoke("getItem", "fullName").should("eq", "Test User");
+  });
 
-//         cy.get('[data-lov-id="src/pages/SignUp.tsx:96:16"] > .block')
-//         cy.get('#province')
-//         cy.get('#province').type("Ontario");
-//         cy.get('#province').should("have.value", "Ontario");
-
-//         cy.get('[data-lov-id="src/pages/SignUp.tsx:111:16"] > .block')
-//         cy.get('#zipCode')
-//         cy.get('#zipCode').type("L6H 2N7");
-//         cy.get('#zipCode').should("have.value", "L6H 2N7");
-
-//         cy.get('[data-lov-id="src/pages/SignUp.tsx:137:14"] > .block')
-//         cy.get('#password')
-//         cy.get('#password').type("a");
-//         cy.get('#password').should("have.value", "a");
-
-//         cy.get('.inline-flex').click();
-//         cy.visit("/sign-in");
-
-//      });
-//   });
-  
+  it("links to the sign up flow", () => {
+    cy.contains("Create Account").click();
+    cy.url().should("include", "/sign-up");
+    cy.contains("Create Account").should("be.visible");
+    cy.get("#fullName").should("exist");
+  });
+});
