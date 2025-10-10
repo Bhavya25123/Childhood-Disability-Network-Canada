@@ -1,8 +1,8 @@
-name: ⚙️ Sprint4-SendLetter
+name: ⚙️ Cypress E2E
 
 on:
   push:
-    branches: [ sprint4-SendLetter ]
+    branches: [ master ]
   pull_request:
 
 jobs:
@@ -82,19 +82,19 @@ jobs:
           wait-on-timeout: 120000
 
       # ---------- Create/Update PR master -> main if tests passed ----------
-      - name: 🔀 Open PR to master
-        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/sprint4-SendLetter'
+      - name: 🔀 Open PR to main
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/github-script@v7
         with:
           script: |
             const { owner, repo } = context.repo;
-            // Is there already an open PR from sprint4-SendLetter -> master?
+            // Is there already an open PR from master -> main?
             const { data: openPRs } = await github.rest.pulls.list({
               owner,
               repo,
               state: 'open',
-              head: `${owner}:sprint4-SendLetter`,
-              base: 'master'
+              head: `${owner}:master`,
+              base: 'main'
             });
             if (openPRs.length) {
               core.info(`PR already open: #${openPRs[0].number}`);
@@ -102,10 +102,10 @@ jobs:
               const { data: pr } = await github.rest.pulls.create({
                 owner,
                 repo,
-                title: "✅ E2E passed: Merge sprint4-SendLetter → master",
-                head: "sprint4-SendLetter",
-                base: "master",
-                body: "Auto-created after Cypress E2E passed on sprint4-SendLetter."
+                title: "✅ E2E passed: Merge master → main",
+                head: "master",
+                base: "main",
+                body: "Auto-created after Cypress E2E passed on master."
               });
               core.info(`Created PR #${pr.number}`);
             }
