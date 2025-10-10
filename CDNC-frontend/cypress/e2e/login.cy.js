@@ -1,21 +1,16 @@
-describe('template spec', () => {
-  it('passes', () => {
-    cy.visit('/')
-  })
-  describe("Navigation", () => {
-    it("should navigate to the Sign In page", () => {
-      // Visit the homepage
-      cy.visit("/");
-  
-      // Click the Sign In button
-      cy.contains("Sign In").click();
-  
-      // Verify that the URL changes (adjust path if needed)
-      cy.url().should("include", "/sign-in");
-  
-      // Optionally check for content on the sign-in page
-      cy.contains("Sign In").should("be.visible");
-    });
+describe("Home navigation", () => {
+  beforeEach(() => {
+    cy.visit("/");
   });
-  
-})
+
+  it("renders the hero slideshow", () => {
+    cy.contains("Supporting Families").should("be.visible");
+    cy.contains("Empowering caregivers with resources and community").should("be.visible");
+  });
+
+  it("navigates to the Sign In page from the header", () => {
+    cy.contains("Sign In").click();
+    cy.url().should("include", "/sign-in");
+    cy.contains("Welcome Back").should("be.visible");
+  });
+});
