@@ -11,7 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getErrorMessage, logError } from "@/utils/error";
 import { validateCityOrConstituency, validateEmail, validatePostalCode } from "@/utils/validation";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Mail, Copy, RotateCw, Send  } from "lucide-react";
+import { Mail, Copy, RotateCw, Send, Info } from "lucide-react";
 
 
 interface MPContact {
@@ -511,33 +511,40 @@ const SendLetter = () => {
                     <Button type="submit" className="bg-purple-600 text-white">
                       <Mail /> Generate letter
                     </Button>
-                    <Button type="button" variant="ghost" onClick={handleCopyDraft}>
-                      <Copy /> Copy draft
-                    </Button>
-                    <Button type="button" variant="secondary" onClick={handleResetDraft}>
-                      <RotateCw /> Reset template
-                    </Button>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                            type="button"
-                            className=" border border-purple-400"
-                            onClick={handleOpenMail}>
-                            <Send /> Send Email
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          Send email
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
                   </div>
                 </form>
               </div>
 
               <div className="bg-white rounded-xl shadow-lg p-7">
-                <h2 className="text-2xl font-bold text-purple-900 mb-6">Editable letter draft</h2>
+                <div className="flex gap-3">
+                  <h2 className="text-2xl font-bold text-purple-900 mb-4">Editable letter draft</h2>
+                  <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              tabIndex={0}
+                              onWheel={(e) => {
+                                // Show tooltip on scroll
+                                const tooltip = e.currentTarget.closest('[data-radix-tooltip-content]');
+                                if (tooltip) {
+                                  tooltip.setAttribute('data-state', 'open');
+                                }
+                              }}
+                              style={{ display: "inline-flex", cursor: "pointer" }}
+                              aria-label="Show disclaimer"
+                            >
+                              <Info className="text-purple-800" style={{ transform: "translateY(3px)" }} />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {/* //todo - break into 3 lines so it fits all the screens */}
+                            <p className="text-sm text-gray-900">
+                              Disclaimer: We are not responsible for the content, accuracy, or outcomes of any messages created or sent using this template.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                </div>      
                 <Textarea
                   value={letterContent}
                   onChange={(e) => {
@@ -546,9 +553,20 @@ const SendLetter = () => {
                   }}
                   className="min-h-[400px]"
                 />
-                <p className="text-sm text-gray-500 mt-3">
-                  You can edit this draft directly. When you&apos;re ready, copy the text above and send it using your preferred communication channel.
-                </p>
+                <div className="mt-3">
+                  <Button type="button" variant="ghost" onClick={handleCopyDraft}>
+                      <Copy /> Copy draft
+                    </Button>
+                    <Button type="button" variant="secondary" onClick={handleResetDraft}>
+                      <RotateCw /> Reset template
+                    </Button>
+                    <Button
+                      type="button"
+                      className=" border border-purple-400 ml-auto"
+                      onClick={handleOpenMail}>
+                      <Send /> Send Email
+                    </Button>
+                </div>
               </div>
             </section>
           </div>
