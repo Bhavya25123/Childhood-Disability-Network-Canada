@@ -70,7 +70,21 @@ jobs:
 
       - name: ⏳ Wait for frontend to be ready
         run: npx wait-on http://localhost:8080 --timeout 120000
+        
+      # ----------jest-super+test ---------
+      - name: ▶️ Run Jest Tests
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: npm test
 
+      - name: 📎 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: ${{ env.BACKEND_DIR }}/coverage
+          if-no-files-found: ignore
+
+      
       # ---------- Cypress ----------
       - name: 🧪 Run Cypress tests
         uses: cypress-io/github-action@v6
@@ -80,7 +94,7 @@ jobs:
           config-file: cypress.config.cjs
           wait-on: 'http://localhost:8080'
           wait-on-timeout: 120000
-
+      
       # ---------- Create/Update PR master -> main if tests passed ----------
       - name: 🔀 Open PR to main
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
