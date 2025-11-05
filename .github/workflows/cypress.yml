@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 18
 
-      # ---------- Backend (background) ----------
+      # ---------- Backend (background) ---------
       - name: 📦 Install Backend Dependencies
         working-directory: ${{ env.BACKEND_DIR }}
         run: npm ci
