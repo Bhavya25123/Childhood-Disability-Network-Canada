@@ -27,16 +27,36 @@ export const Footer = () => {
               Supporting caregivers with community, resources, and advocacy.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-white hover:text-accent-main transition-colors">
+              <a 
+                href="#" 
+                className="text-white hover:text-accent-main transition-colors"
+                tabIndex={0} 
+                aria-label="Facebook"
+              >
                 <FaFacebook className="text-xl" />
               </a>
-              <a href="#" className="text-white hover:text-accent-main transition-colors">
+              <a 
+                href="#" 
+                className="text-white hover:text-accent-main transition-colors" 
+                tabIndex={0} 
+                aria-label="Twitter"
+              >
                 <FaTwitter className="text-xl" />
               </a>
-              <a href="#" className="text-white hover:text-accent-main transition-colors">
+              <a 
+                href="#" 
+                className="text-white hover:text-accent-main transition-colors" 
+                tabIndex={0} 
+                aria-label="Instagram"
+              >
                 <FaInstagram className="text-xl" />
               </a>
-              <a href="#" className="text-white hover:text-accent-main transition-colors">
+              <a 
+                href="#" 
+                className="text-white hover:text-accent-main transition-colors" 
+                tabIndex={0} 
+                aria-label="LinkedIn"
+              >
                 <FaLinkedin className="text-xl" />
               </a>
             </div>
@@ -51,27 +71,47 @@ export const Footer = () => {
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/about" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/resources" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/resources" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Resources
                 </Link>
               </li>
               <li>
-                <Link to="/community" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/community" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Community
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/contact" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Contact
                 </Link>
               </li>
@@ -87,27 +127,47 @@ export const Footer = () => {
             <h3 className="text-xl font-bold mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/resources/health" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/resources/health" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Health Resources
                 </Link>
               </li>
               <li>
-                <Link to="/resources/financial" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/resources/financial" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Financial Assistance
                 </Link>
               </li>
               <li>
-                <Link to="/resources/support-groups" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/resources/support-groups" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Support Groups
                 </Link>
               </li>
               <li>
-                <Link to="/resources/education" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/resources/education" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Educational Materials
                 </Link>
               </li>
               <li>
-                <Link to="/resources/advocacy" className="text-white hover:text-accent-main transition-colors">
+                <Link 
+                  to="/resources/advocacy" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   Advocacy Tools
                 </Link>
               </li>
@@ -125,12 +185,20 @@ export const Footer = () => {
               <p className="mb-2 text-white">123 Support Street</p>
               <p className="mb-2 text-white">Care City, CA 90000</p>
               <p className="mb-2 text-white">
-                <a href="mailto:info@caregivernetwork.org" className="text-white hover:text-accent-main transition-colors">
+                <a 
+                  href="mailto:info@caregivernetwork.org" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   info@caregivernetwork.org
                 </a>
               </p>
               <p>
-                <a href="tel:+11234567890" className="text-white hover:text-accent-main transition-colors">
+                <a 
+                  href="tel:+11234567890" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
                   (123) 456-7890
                 </a>
               </p>
@@ -143,13 +211,25 @@ export const Footer = () => {
             &copy; {currentYear} Caregiver Support Network. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex gap-4 text-sm">
-            <Link to="/privacy" className="text-white hover:text-accent-main transition-colors">
+            <Link 
+              to="/privacy" 
+              className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              tabIndex={0}
+            >
               Privacy Policy
             </Link>
-            <Link to="/terms" className="text-white hover:text-accent-main transition-colors">
+            <Link 
+              to="/terms" 
+              className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              tabIndex={0}
+            >
               Terms of Service
             </Link>
-            <Link to="/accessibility" className="text-white hover:text-accent-main transition-colors">
+            <Link 
+              to="/accessibility" 
+              className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              tabIndex={0}
+            >
               Accessibility
             </Link>
           </div>
