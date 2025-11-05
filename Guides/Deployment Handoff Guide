@@ -96,14 +96,3 @@ The existing `vercel.json` rewrites all routes to `index.html`, ensuring client-
 
 ---
 
-## 5. Final Handoff Package
-
-Provide the client with:
-
-1. **Deployment access** – Invite their accounts to the Render and Vercel projects with appropriate roles.
-2. **Runbooks** – Share this handoff guide plus the Developer Setup Guide so future maintainers understand local workflows.
-3. **Environment variable ledger** – A secure document listing each variable, its purpose, and where it is managed.
-4. **Support window** – Offer a short overlap period where your team remains on-call to troubleshoot first deployments or DNS cutovers.
-5. **Testing status** – Attach the latest Cypress/Jest run results or badges so the client knows the codebase state at transfer time.
-
-With these steps, the client can confidently operate the CDAH platform using Render and Vercel while retaining full control over credentials and deployments.
