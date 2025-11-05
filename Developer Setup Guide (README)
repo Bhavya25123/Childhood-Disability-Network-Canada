@@ -1,152 +1,196 @@
 # Developer Setup Guide
 
-Welcome to the Childhood Disability Advocacy Hub (CDAH) project. This guide helps you stand up a complete development environment for the full-stack application, which consists of an Express/MongoDB backend and a Vite/React frontend.
+Welcome to the Childhood Disability Advocacy Hub (CDAH) project. This guide describes the full development workflow for the Express/MongoDB backend located in `Backend/` and the Vite/React frontend located in `CDNC-frontend/`.
 
-## Project Overview
+---
 
-The repository hosts two actively developed apps:
+## 1. Architecture at a Glance
 
-| Path | Description |
+* **Backend (`Backend/`)** – An Express app that exposes authentication, Member of Parliament lookup, and community enrollment APIs. Requests are wired in `app.js`, MongoDB connectivity and startup live in `server.js`, and domain logic sits under `controller/` and `utils/`.
+* **Frontend (`CDNC-frontend/`)** – A Vite-powered single-page application that calls the backend through the shared axios client in `src/lib/api.ts` and renders routed experiences from `src/pages/`.
+
+Understanding this split is key when troubleshooting: the frontend proxies API calls to whatever base URL is configured in `VITE_API_URL`, and the backend assumes the Mongo database and optional SMTP/webhook integrations are reachable before accepting requests.
+
+---
+
+## 2. Prerequisites & Tooling
+
+| Requirement | Notes |
 | --- | --- |
-| `Backend/` | Node.js (Express) API serving authentication, member enrollment, and Member of Parliament lookup endpoints. |
-| `CDNC-frontend/` | Vite + React TypeScript single-page application that consumes the backend APIs and renders the public site. |
+| **Node.js 18+** | Matches the engines used during development and supports native `fetch` in case you add SSR utilities later.
+| **npm 9+** | Bundled with modern Node releases; no lockfiles for yarn/pnpm are committed.
+| **MongoDB 6+** | Local instance or a hosted cluster. The app connects via a `MONGO_URI` connection string.
+| **Git** | Clone this repository and manage feature branches.
+| Optional services | SMTP credentials for transactional mail and an HTTPS endpoint to receive analytics webhooks.
 
-## Prerequisites
+> Tip: Install [nvm](https://github.com/nvm-sh/nvm) so every contributor can align on the same Node version quickly.
 
-* **Node.js 18+** (provides native `fetch` support used by the email/analytics utilities). Consider using [nvm](https://github.com/nvm-sh/nvm) to match the project version.
-* **npm 9+** (bundled with recent Node releases). Yarn or pnpm are not officially supported.
-* **MongoDB 6.x or higher** accessible locally or via a managed service.
-* **Git** for cloning the repository.
-* Optional services:
-  * SMTP account for confirmation emails (SendGrid, Mailgun, etc.).
-  * HTTPS endpoint capable of receiving JSON webhooks if you wish to log analytics events.
+---
 
-## Repository Setup
+## 3. Clone & Install Dependencies
 
-1. **Clone the repository and enter the project root:**
-   ```bash
-   git clone <your-fork-or-origin>
-   cd childhood-disability-advocacy-hub
-   ```
-2. **Install dependencies for both applications:**
-   ```bash
-   cd Backend && npm install
-   cd ../CDNC-frontend && npm install
-   ```
+```bash
+git clone <your-fork-or-origin>
+cd CDAH
 
-## Backend Configuration (`Backend/`)
+# Backend dependencies
+cd Backend
+npm install
 
-### Environment Variables
+# Frontend dependencies
+cd ../CDNC-frontend
+npm install
+```
 
-Create a `.env` file in the `Backend/` directory. The server expects the following variables:
+Both packages rely exclusively on the `package-lock.json` that ships with the repo, so `npm install` is deterministic.
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `MONGO_URI` | ✅ | Connection string for MongoDB used by the Express app. |
-| `JWT_SECRET` | ✅ | Secret used to sign JSON Web Tokens during login. `utils/jwt.js` reads this value and defaults to `secretkey` only for development. |
-| `PORT` | ⛔️ | Optional override for the HTTP port (defaults to `5001`). |
-| `SMTP_HOST`, `SMTP_PORT` | ⚙️ | Required only if you want to send real confirmation emails to new members (`utils/notifications.js`). |
-| `SMTP_USER`, `SMTP_PASS` | ⚙️ | SMTP credentials; both must be set together if authentication is required. |
-| `SMTP_SECURE`, `SMTP_REQUIRE_TLS`, `SMTP_IGNORE_TLS`, `SMTP_TLS_REJECT_UNAUTHORIZED` | ⚙️ | Optional boolean toggles for TLS behaviour when using custom providers. |
-| `EMAIL_FROM`, `EMAIL_FROM_NAME` | ⚙️ | Friendly sender information for outgoing member welcome emails. Falls back to `SMTP_USER` or `no-reply@localhost`. |
-| `ANALYTICS_WEBHOOK_URL` | ⚙️ | Optional endpoint that receives JSON payloads whenever a community member enrolls. |
+---
 
-> **Tip:** When SMTP is not configured the code logs a friendly skip message so local development can proceed without errors.
+## 4. Configure Environment Variables
 
-### Running the Backend
+### Backend (`Backend/.env`)
 
-1. **Start MongoDB** locally or ensure your cloud instance is reachable.
-2. **Launch the API server:**
+Create a `.env` file next to `server.js`:
+
+```dotenv
+MONGO_URI=mongodb://localhost:27017/cdah
+JWT_SECRET=change-me
+PORT=5001
+
+# Optional
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=apikey
+SMTP_PASS=super-secret
+EMAIL_FROM=advocacy@example.com
+EMAIL_FROM_NAME="CDAH Team"
+ANALYTICS_WEBHOOK_URL=https://example.com/hooks/enrollment
+```
+
+* `MONGO_URI` is required for `mongoose.connect` in `server.js` to succeed.【F:Backend/server.js†L3-L27】
+* `JWT_SECRET` feeds the signing logic in `utils/jwt.js` and should be unique per environment.【F:Backend/utils/jwt.js†L1-L13】
+* SMTP keys are optional: missing values simply skip sending emails in `utils/notifications.js` but the API still returns success.【F:Backend/utils/notifications.js†L32-L122】
+
+### Frontend (`CDNC-frontend/.env.local`)
+
+Create `.env.local` in the frontend directory:
+
+```dotenv
+VITE_API_URL=http://localhost:5001/api
+```
+
+If you omit this variable, the axios client falls back to the same default URL, but setting it explicitly makes it obvious which backend instance you target.【F:CDNC-frontend/src/lib/api.ts†L1-L22】
+
+---
+
+## 5. Run the Stack Locally
+
+1. **Start MongoDB** (for example `brew services start mongodb-community@6.0` on macOS).
+2. **Boot the backend**:
    ```bash
    cd Backend
    npm run dev
    ```
-   This runs `server.js`, connects to Mongo, and listens on `http://localhost:5001` by default.【F:Backend/server.js†L12-L24】
-3. **Run automated tests (optional):**
-   ```bash
-   npm test
-   ```
-   Jest executes the test suite serially (`--runInBand`).【F:Backend/package.json†L6-L11】
-
-#### Database Collections
-
-The backend expects the following Mongo collections:
-
-* `users` – created automatically when people register through `/api/auth/register` with validation enforced in `controller/auth.controller.js` and `utils/validation.js`.
-* `members` – populated via `/api/members` when the “Join Community” form submits.【F:Backend/controller/member.controller.js†L7-L74】
-* `MPContacts` and `MPEmail` – used to build the Member of Parliament directory. Seed these collections with your own datasets to enable search results. The merge logic lives in `controller/mp.controller.js`.【F:Backend/controller/mp.controller.js†L1-L60】
-
-### Useful Backend Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the Express server for local development. |
-| `npm start` | Production start command (same as `npm run dev` but without nodemon). |
-| `npm test` | Execute the Jest API tests. |
-
-## Frontend Configuration (`CDNC-frontend/`)
-
-### Environment Variables
-
-Create a `.env.local` (or `.env`) file inside `CDNC-frontend/` and define:
-
-```bash
-VITE_API_URL=http://localhost:5001/api
-```
-
-If omitted, the app automatically falls back to the same default value used in `src/lib/api.ts` so the local backend is detected automatically.【F:CDNC-frontend/src/lib/api.ts†L1-L21】
-
-### Running the Frontend
-
-1. **Start the development server:**
+   * `server.js` reads the `.env`, ensures Mongo indexes exist with `User.syncIndexes()` and `Member.syncIndexes()`, then starts the HTTP server on `PORT` or `5001` by default.【F:Backend/server.js†L7-L28】
+   * API routes are mounted under `/api/auth`, `/api/mps`, and `/api/members` via `app.use` in `app.js`.【F:Backend/app.js†L1-L31】
+3. **Boot the frontend**:
    ```bash
    cd CDNC-frontend
    npm run dev
    ```
-   Vite serves the SPA on `http://localhost:5173` by default.
-2. **Check code quality:**
-   ```bash
-   npm run lint
-   ```
-3. **Build and preview production assets:**
-   ```bash
-   npm run build
-   npm run preview
-   ```
-4. **Explore the Cypress end-to-end harness:**
-   ```bash
-   npm run test:e2e:open
-   ```
-   Launches Cypress in interactive mode for manual test execution.
+   * Vite serves the SPA on `http://localhost:5173` unless you override the port. Pages load React Query, router, and other providers from `src/App.tsx`.【F:CDNC-frontend/src/App.tsx†L1-L38】
+4. **Visit** `http://localhost:5173` and confirm that joining the community, searching MPs, and authentication flows all reach the API successfully.
 
-### Frontend Project Structure Highlights
+---
 
-* Routing and providers live in `src/App.tsx`, including React Query, router configuration, toasters, and the accessibility wrapper.【F:CDNC-frontend/src/App.tsx†L1-L38】
-* API clients (`src/lib/api.ts`, `src/lib/auth.ts`, `src/lib/members.ts`) consolidate axios usage and make swapping environments easier.【F:CDNC-frontend/src/lib/auth.ts†L1-L22】【F:CDNC-frontend/src/lib/members.ts†L1-L17】
-* Page components under `src/pages/` (e.g., `SendLetter.tsx`, `JoinCommunity.tsx`) encapsulate user flows while relying on shared UI primitives and hooks.
+## 6. Working with Data
 
-## Full-Stack Workflow
+* **Authentication** – Register new users by POSTing to `/api/auth/register`; the controller hashes passwords with bcrypt and rejects duplicate emails.【F:Backend/controller/auth.controller.js†L1-L47】
+* **Login** – `/api/auth/login` trims/lowercases email, compares hashes, and returns a JWT plus user metadata on success.【F:Backend/controller/auth.controller.js†L49-L78】
+* **Community enrollment** – POST to `/api/members` with `name`, `email`, `role`, and `agreeToTerms`. The controller validates fields, normalizes emails, and triggers optional email/webhook side effects after creating the record.【F:Backend/controller/member.controller.js†L1-L64】
+* **MP directory** – Populate the `MPContacts` and `MPEmail` collections with your own datasets; lookup logic merges both collections inside `controller/mp.controller.js`.【F:Backend/controller/mp.controller.js†L1-L60】
 
-1. Start MongoDB.
-2. Run `npm run dev` in `Backend/`.
-3. Run `npm run dev` in `CDNC-frontend/`.
-4. Open `http://localhost:5173` and verify the SPA can reach `http://localhost:5001/api` without CORS issues. The backend enables `cors()` globally, so default ports work out of the box.【F:Backend/app.js†L1-L21】
-5. Register a user, enroll as a community member, and search for MPs to populate local collections.
+Seed data through Mongo shell, Compass, or by scripting test fixtures with the exposed endpoints.
 
-## Troubleshooting
+---
 
-| Symptom | Possible Cause | Fix |
+## 7. Automated Testing & Quality Gates
+
+### Backend
+
+```bash
+cd Backend
+npm test
+```
+Runs Jest in serial mode (`--runInBand`) as defined in `package.json` so that database-dependent tests remain deterministic.【F:Backend/package.json†L1-L26】
+
+### Frontend
+
+```bash
+cd CDNC-frontend
+npm run lint      # ESLint across the project
+npm run build     # Production build to dist/
+npm run preview   # Serve the build locally
+```
+Scripts live in `package.json` and should pass before opening pull requests.【F:CDNC-frontend/package.json†L1-L36】
+
+### Cypress End-to-End Suite
+
+```bash
+cd CDNC-frontend
+npm run test:e2e:open   # Interactive mode
+npm run test:e2e:run    # Headless CI mode
+```
+* Update the `baseUrl` in `cypress.config.cjs` if your Vite dev server runs on a non-default port. The template currently targets `http://localhost:8080`—change it to `5173` for local development.【F:CDNC-frontend/cypress.config.cjs†L1-L9】
+* Start both backend and frontend servers before running the tests so routes like `/join` and `/send-letter` can complete flows end-to-end.
+
+---
+
+## 8. Debugging Tips
+
+* **API errors** – Backend controllers log explicit error messages before returning HTTP errors. Watch the terminal running `npm run dev` for the `❌` logs emitted from controllers such as `member.controller.js` or `auth.controller.js` when validation fails.【F:Backend/controller/member.controller.js†L33-L63】【F:Backend/controller/auth.controller.js†L29-L77】
+* **Unhandled routes** – Requests to unknown `/api/*` paths return JSON 404 responses thanks to the fallback middleware in `app.js`; this helps detect typos in frontend API calls.【F:Backend/app.js†L13-L24】
+* **CORS** – `app.js` enables CORS globally with `app.use(cors())`, so cross-origin issues typically stem from the wrong `VITE_API_URL`.【F:Backend/app.js†L1-L15】【F:CDNC-frontend/src/lib/api.ts†L1-L22】
+* **Mongo indexes** – On every cold start, `server.js` calls `User.syncIndexes()` and `Member.syncIndexes()`. If you change schemas in `Data/`, restart the server to refresh indexes automatically.【F:Backend/server.js†L7-L21】
+
+---
+
+## 9. Project Structure Reference
+
+```
+Backend/
+  app.js                # Express app, middleware, route mounting
+  server.js             # Mongo connection + HTTP bootstrap
+  routes/               # API route definitions
+  controller/           # Request handlers
+  utils/                # JWT, notifications, validation helpers
+CDNC-frontend/
+  src/App.tsx           # Providers, router, global layout
+  src/pages/            # Feature pages (JoinCommunity, SendLetter, etc.)
+  src/lib/api.ts        # Axios client with environment-driven base URL
+  cypress/              # End-to-end specs and fixtures
+```
+
+---
+
+## 10. Collaboration Workflow
+
+* Create feature branches from `main` (e.g., `git checkout -b feature/join-form-copy`).
+* Commit frequently and run tests before pushing.
+* Use pull requests to merge changes; Cypress and Jest commands above can serve as CI checks.
+* Keep `.env` files out of source control—`git status` should always show them as untracked.
+
+---
+
+## 11. Troubleshooting Reference
+
+| Symptom | Likely Cause | Resolution |
 | --- | --- | --- |
-| `❌ Mongo error` during startup | Incorrect `MONGO_URI` or MongoDB service offline. | Verify the URI, ensure Mongo is running, and that the database allows connections from your IP.【F:Backend/server.js†L15-L27】 |
-| Login always fails | Password policy mismatch or missing user records. | Ensure your test account meets validation rules in `utils/validation.js` and that the password stored in Mongo is hashed. |
-| Enrollment emails are skipped | SMTP environment variables absent. | Provide SMTP configuration or ignore the informational log—the API still returns `201`.【F:Backend/utils/notifications.js†L32-L122】 |
-| MP search returns empty arrays | Collections lack data. | Import representative datasets into `MPContacts` and `MPEmail`. The API merges both collections to surface email addresses.【F:Backend/controller/mp.controller.js†L7-L60】 |
-| Frontend cannot reach backend | Wrong `VITE_API_URL` or backend offline. | Confirm both dev servers are running and that `VITE_API_URL` matches the Express base URL.【F:CDNC-frontend/src/lib/api.ts†L1-L21】 |
-
-## Recommended Development Practices
-
-* Commit early and often; the repository does not include Husky hooks so linting/tests are manual.
-* Keep secrets out of version control—`.env` files are ignored by default.
-* Use feature branches when collaborating and ensure both apps’ dependencies stay in sync after pulling.
+| `❌ Mongo error` during backend startup | Wrong `MONGO_URI` or MongoDB offline. | Verify credentials and network access; the server logs the raw error before exiting.【F:Backend/server.js†L13-L27】 |
+| Login always fails | Password stored without hashing or email mismatch. | Ensure registrations go through the `/api/auth/register` endpoint, which hashes with bcrypt before saving.【F:Backend/controller/auth.controller.js†L16-L38】 |
+| Enrollment emails skipped | SMTP variables unset. | Provide SMTP credentials or accept the logged warning—`create` still returns `201`.【F:Backend/controller/member.controller.js†L1-L64】【F:Backend/utils/notifications.js†L32-L122】 |
+| MP search returns empty results | `MPContacts` / `MPEmail` collections empty. | Import data into Mongo; lookup logic lives in `controller/mp.controller.js`.【F:Backend/controller/mp.controller.js†L1-L60】 |
+| Frontend API calls hit 404 | Route mismatch or stale base URL. | Confirm the requested path exists in `app.js` and that `VITE_API_URL` is pointed at the correct environment.【F:Backend/app.js†L4-L24】【F:CDNC-frontend/src/lib/api.ts†L1-L22】 |
+| Cypress specs fail instantly | Dev server not running or wrong port configured. | Start `npm run dev` for both apps and update `baseUrl` in `cypress.config.cjs`.【F:CDNC-frontend/cypress.config.cjs†L1-L9】 |
 
 Happy building!

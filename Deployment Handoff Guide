@@ -1,0 +1,109 @@
+# Deployment Handoff Guide
+
+This guide outlines how to transfer ownership of the CDAH stack to a client and stand up production-ready deployments on Render (backend) and Vercel (frontend).
+
+---
+
+## 1. Pre-Transfer Checklist
+
+1. **Audit the repository** – Confirm `Backend/` and `CDNC-frontend/` build cleanly with `npm install` and that all tests pass locally (see Developer Setup Guide for commands).
+2. **Inventory environment variables** – Capture the values currently in use (Mongo connection strings, JWT secret, SMTP credentials, analytics webhook).
+3. **Decide on secrets management** – Render and Vercel both support environment variable dashboards; plan where the client will store long-term credentials.
+4. **Collect domain/DNS requirements** – Record existing hostnames, SSL cert ownership, and email sending domains if any.
+
+Deliver this information alongside the credentials to minimize back-and-forth after handoff.
+
+---
+
+## 2. Backend Migration to Render
+
+Render will host the Express API from the `Backend/` directory.
+
+### 2.1 Provision the Service
+
+1. In Render, create a **Web Service** from the repository.
+2. Set the **Root Directory** to `Backend` so Render installs the correct package.json.
+3. Configure commands:
+   * **Build Command**: `npm install`
+   * **Start Command**: `npm start`
+
+`npm start` runs `node server.js`, which connects to Mongo, syncs indexes for the `User` and `Member` models, and listens on `PORT` (default `5001`).【F:Backend/package.json†L1-L12】【F:Backend/server.js†L3-L28】 Render automatically injects the port through `PORT`, so no code changes are required.
+
+### 2.2 Configure Environment Variables
+
+Add the following keys in Render’s dashboard (Environment tab):
+
+| Variable | Purpose |
+| --- | --- |
+| `MONGO_URI` | MongoDB connection string consumed by `mongoose.connect`.【F:Backend/server.js†L13-L21】 |
+| `JWT_SECRET` | Secret for signing access tokens in `utils/jwt.js`.【F:Backend/utils/jwt.js†L1-L13】 |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`, `EMAIL_FROM_NAME` | Optional SMTP settings used when sending member confirmation emails.【F:Backend/utils/notifications.js†L32-L122】 |
+| `ANALYTICS_WEBHOOK_URL` | Optional webhook destination triggered after successful enrollment. | 
+
+Render encrypts values at rest, so provide production-specific secrets directly in the UI.
+
+### 2.3 Networking & Verification
+
+* Ensure the Render service exposes the default HTTP port and note the public hostname (e.g., `https://cdah-api.onrender.com`).
+* Use the Render shell to run `curl $RENDER_SERVICE_URL/api/health` (create a simple `/api/health` route if desired) or hit `/api/members` with a test payload to verify responses.
+* Check logs in Render’s dashboard: the startup log should include `✅ MongoDB connected` and `🚀 Server running` messages emitted by `server.js`.【F:Backend/server.js†L15-L22】
+
+Once validated, share the Render service link and access rights with the client.
+
+---
+
+## 3. Frontend Migration to Vercel
+
+Vercel will host the Vite SPA located in `CDNC-frontend/`.
+
+### 3.1 Provision the Project
+
+1. Create a new Vercel project from the same repository.
+2. Set the **Root Directory** to `CDNC-frontend`.
+3. Configure build settings:
+   * **Build Command**: `npm run build`
+   * **Output Directory**: `dist`
+
+These map directly to the scripts in `package.json` where `build` runs `vite build` to emit the static bundle.【F:CDNC-frontend/package.json†L1-L22】
+
+### 3.2 Environment Variables
+
+Define production variables under **Settings → Environment Variables**:
+
+| Variable | Value |
+| --- | --- |
+| `VITE_API_URL` | The public Render URL with `/api` appended (e.g., `https://cdah-api.onrender.com/api`). The axios client reads this variable at build time.【F:CDNC-frontend/src/lib/api.ts†L1-L22】 |
+
+Re-deploy after setting variables so the new API URL is baked into the client bundle.
+
+### 3.3 SPA Routing
+
+The existing `vercel.json` rewrites all routes to `index.html`, ensuring client-side routing works without 404s in production.【F:CDNC-frontend/vercel.json†L1-L8】 Confirm the file is present in the root of `CDNC-frontend` before connecting the repo so Vercel applies it automatically.
+
+### 3.4 Verification
+
+* After deployment, browse to the Vercel preview URL and walk through join, login, and send-letter flows. The React app’s providers and router are wired in `src/App.tsx`, so any hydration issues usually stem from missing environment variables.【F:CDNC-frontend/src/App.tsx†L1-L38】
+* Run the Cypress regression suite against the deployed site using `npm run test:e2e:run` with `CYPRESS_BASE_URL` overridden to the Vercel domain to confirm mission-critical journeys pass.【F:CDNC-frontend/package.json†L13-L35】【F:CDNC-frontend/cypress.config.cjs†L1-L9】
+
+---
+
+## 4. Coordinating Backend & Frontend URLs
+
+1. Wait for Render to finish its first deploy and copy the live API URL.
+2. Update Vercel’s `VITE_API_URL` to match the Render URL plus `/api` path configured in `app.js`.【F:Backend/app.js†L4-L16】
+3. Trigger a new Vercel deployment so the static bundle references the new API endpoint.
+4. Clear browser caches when testing—Vite-generated assets are hashed, but stale service workers can cache older API URLs if you add one later.
+
+---
+
+## 5. Final Handoff Package
+
+Provide the client with:
+
+1. **Deployment access** – Invite their accounts to the Render and Vercel projects with appropriate roles.
+2. **Runbooks** – Share this handoff guide plus the Developer Setup Guide so future maintainers understand local workflows.
+3. **Environment variable ledger** – A secure document listing each variable, its purpose, and where it is managed.
+4. **Support window** – Offer a short overlap period where your team remains on-call to troubleshoot first deployments or DNS cutovers.
+5. **Testing status** – Attach the latest Cypress/Jest run results or badges so the client knows the codebase state at transfer time.
+
+With these steps, the client can confidently operate the CDAH platform using Render and Vercel while retaining full control over credentials and deployments.
