@@ -189,7 +189,7 @@ describe('Core caregiver flows', () => {
         Object.defineProperty(locationStub, 'href', {
           configurable: true,
           get: () => original.href,
-          set: (value: string) => {
+          set: (value) => {
             navigate(value);
           },
         });
