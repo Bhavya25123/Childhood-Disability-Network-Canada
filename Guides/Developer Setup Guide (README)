@@ -31,7 +31,7 @@ Understanding this split is key when troubleshooting: the frontend proxies API c
 
 ```bash
 git clone <your-fork-or-origin>
-cd CDAH
+cd ChildHodd-Disability-advocacy-hub
 
 # Backend dependencies
 cd Backend
@@ -64,7 +64,7 @@ SMTP_USER=apikey
 SMTP_PASS=super-secret
 EMAIL_FROM=advocacy@example.com
 EMAIL_FROM_NAME="CDAH Team"
-ANALYTICS_WEBHOOK_URL=https://example.com/hooks/enrollment
+
 ```
 
 * `MONGO_URI` is required for `mongoose.connect` in `server.js` to succeed.【F:Backend/server.js†L3-L27】
