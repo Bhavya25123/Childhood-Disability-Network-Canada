@@ -1,5 +1,6 @@
 import { TiBookmark, TiBook } from "react-icons/ti";
-import { FiDollarSign, FiUsers } from "react-icons/fi";
+import { FiDollarSign, FiUsers, FiBarChart } from "react-icons/fi";
+import { FaWheelchair } from "react-icons/fa";
 import { ReactNode } from "react";
 
 interface ResourceCardProps {
@@ -67,15 +68,15 @@ export const ResourcesSection = () => {
       <div className="mx-auto max-w-6xl relative">
         <div className="mx-auto mb-14 flex max-w-2xl flex-col items-center text-center">
           <h2 className="relative flex items-center gap-3 text-3xl font-bold tracking-tight text-gray-900 max-sm:text-2xl">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-100 to-purple-200 text-purple-900 shadow-inner">
-              <TiBookmark className="text-2xl" />
-            </span>
             <span className="bg-gradient-to-r from-purple-900 via-indigo-800 to-blue-700 bg-clip-text text-transparent">
-              Essential Resources
+              In Canada, DISABILITY POVERTY Begins at Birth
             </span>
           </h2>
           <p className="mt-5 text-base text-gray-600">
-            Curated tools and guidance to support caregivers and families.
+            The following recommendations would make significant
+             strides in reducing childhood disability poverty. 
+             Children have the right to thrive at home with 
+             their families in a way that is more equitable their peers.
           </p>
         </div>
 
@@ -83,21 +84,22 @@ export const ResourcesSection = () => {
           className="grid gap-10 md:grid-cols-3 max-md:gap-8"
         >
           <ResourceCard
-            icon={<TiBook className="text-2xl" />}
-            title="Caregiving Guides"
-            description="Step-by-step guides, checklists, and foundational knowledge to help you feel confident."
+            icon={<FiDollarSign className="text-2xl" />}
+            title="Create a Lifetime Caregiver Income Benefit"
+            description="A Lifetime Caregiver Income benefit will recognize
+             the importance and full-time work associated with being a caregiver of a loved one."
             link="/resources#caregiving"
           />
           <ResourceCard
-            icon={<FiDollarSign className="text-2xl" />}
-            title="Financial Support"
-            description="Explore grants, tax credits, subsidies, and structured financial planning help."
+            icon={<FiBarChart className="text-2xl" />}
+            title="Tripling the Child Disability Benefit"
+            description="Improvements to the Child Disability Benefit are needed to ensure the Benefit is effective in providing help as most needed."
             link="/resources#financial"
           />
             <ResourceCard
-            icon={<FiUsers className="text-2xl" />}
-            title="Community Forum"
-            description="Exchange experiences, find peer support, and build your caregiver network."
+            icon={<FaWheelchair className="text-2xl" />}
+            title="Accessibility Grants for Home and Vehicle Modifications"
+            description="Tax credits such as the Multigenerational Home Renovation tax credit must include families with children with disabilities."
             link="/resources#community"
           />
         </div>

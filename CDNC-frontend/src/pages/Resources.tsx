@@ -31,9 +31,9 @@ const Resources = () => {
         {/* Hero Section */}
         <section className="bg-purple-light/30 py-16 px-8">
           <div className="max-w-screen-xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-6">Caregiver Resources</h1>
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Access comprehensive guides, financial assistance information, and community support to help you navigate your caregiving journey.
+            <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-6">Government Funding and Support</h1>
+            <p className=" md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+              Child Disability Tax Credit, OAP, Other provincial fundings, National and Provincial/Territoral Links
             </p>
             <div className="relative max-w-xl mx-auto">
               <div className="flex items-center border-2 rounded-lg bg-transparent overflow-hidden">

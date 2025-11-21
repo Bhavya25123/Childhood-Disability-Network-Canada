@@ -52,7 +52,7 @@ export const Header = () => {
           Childhood Disability Network Canada
         </Link>
 
-        <nav className="flex gap-8 max-sm:hidden" aria-label="Main navigation" role="navigation">
+        <nav className="flex gap-6 max-sm:hidden" aria-label="Main navigation" role="navigation">
           <Link
             to="/"
             className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/' ? 'text-purple-900' : ''}`}
@@ -65,11 +65,11 @@ export const Header = () => {
           <Link
             to="/advocacy"
             className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/advocacy' ? 'text-purple-900' : ''}`}
-            aria-label="Advocacy Hub"
+            aria-label="Advocacy"
             aria-current={location.pathname === '/advocacy' ? 'page' : undefined}
             tabIndex={0}
           >
-            Advocacy Hub
+            Advocacy
           </Link>
           <Link
             to="/resources"
@@ -81,26 +81,16 @@ export const Header = () => {
             Resources
           </Link>
           <Link
-            to="/find-support"
-            className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/find-support' ? 'text-purple-900' : ''}`}
-            aria-label="Find Support"
-            aria-current={location.pathname === '/find-support' ? 'page' : undefined}
-            tabIndex={0}
-          >
-            Find Support
-          </Link>
-          <Link
             to="/join-community"
             className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/join-community' ? 'text-purple-900' : ''}`}
             aria-label="Join Community"
             aria-current={location.pathname === '/join-community' ? 'page' : undefined}
             tabIndex={0}
           >
-            Join Community
+            Join Our Network
           </Link>
         </nav>
-
-        {userInitial ? (
+        {/* {userInitial ? (
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen((prev) => !prev)}
@@ -151,7 +141,7 @@ export const Header = () => {
           >
             Sign In
           </Link>
-        )}
+        )} */}
       </div>
     </header>
   );
