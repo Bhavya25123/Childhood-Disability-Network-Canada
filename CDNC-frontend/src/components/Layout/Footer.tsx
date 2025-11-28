@@ -52,7 +52,7 @@ export const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
-            className="flex flex-col h-full mx-10"
+            className="flex flex-col h-full md:mx-10"
           >
             <h3 className="text-xl font-bold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2 flex-1">

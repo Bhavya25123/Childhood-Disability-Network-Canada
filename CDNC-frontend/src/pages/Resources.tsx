@@ -92,27 +92,32 @@ const Resources = () => {
         <section className=" px-4 mb-10">
           <div className="max-w-screen-xl mx-auto">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="flex justify-between items-center mb-2 border-b">
-                <TabsList className="bg-transparent mb-[-1px]">
-                  <TabsTrigger value="guides" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none">
-                    <Book className="mr-2 h-4 w-4" />
-                    Caregiving Guides
+              <div className="mb-2 border-b overflow-x-auto">
+                <TabsList className="bg-transparent mb-[-1px] flex-nowrap inline-flex w-full min-w-max md:w-auto">
+                  <TabsTrigger value="guides" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <Book className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Caregiving Guides</span>
+                    <span className="sm:hidden">Guides</span>
                   </TabsTrigger>
-                  <TabsTrigger value="financial" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Financial Support
+                  <TabsTrigger value="financial" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <FileText className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Financial Support</span>
+                    <span className="sm:hidden">Financial</span>
                   </TabsTrigger>
-                  <TabsTrigger value="community" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none">
-                    <Link className="mr-2 h-4 w-4" />
-                    Community Resources
+                  <TabsTrigger value="community" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <Link className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Community Resources</span>
+                    <span className="sm:hidden">Community</span>
                   </TabsTrigger>
-                  <TabsTrigger value="national" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none">
-                    <Globe className="mr-2 h-4 w-4" />
-                    National Resources
+                  <TabsTrigger value="national" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">National Resources</span>
+                    <span className="sm:hidden">National</span>
                   </TabsTrigger>
-                  <TabsTrigger value="provincial" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none">
-                    <MapPin className="mr-2 h-4 w-4" />
-                    Provincial Resources
+                  <TabsTrigger value="provincial" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <MapPin className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Provincial Resources</span>
+                    <span className="sm:hidden">Provincial</span>
                   </TabsTrigger>
                 </TabsList>
               </div>

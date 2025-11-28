@@ -50,13 +50,13 @@ const ImageRunningBanner = ({
         </AnimatePresence>
       </div>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-16 px-3">
-        <p className="bg-white/90 text-gray-800 text-sm px-3 py-1 rounded-md shadow-sm max-w-[90vw] md:max-w-[80%]">
+      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-12 md:bottom-16 px-2 md:px-3 w-[95%] md:w-auto">
+        <p className="bg-white/90 text-gray-800 text-xs md:text-sm px-2 md:px-3 py-1 md:py-2 rounded-md shadow-sm text-center mx-auto max-w-full md:max-w-[80%]">
           {items[currentIndex].alt}
         </p>
       </div>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-3 flex gap-2">
+      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-2 md:bottom-3 flex gap-2">
         {items.map((_, idx) => (
           <button
             key={idx}
