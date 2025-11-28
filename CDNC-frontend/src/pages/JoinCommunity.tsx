@@ -309,44 +309,6 @@ const JoinCommunity = () => {
             </div>
           </div>
         </section>
-        
-        <section className="py-16 px-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6 text-purple-900">Upcoming Community Events</h2>
-            <p className="text-lg mb-12 text-gray-600">
-              Join these virtual and in-person events to connect with other caregivers
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">June 15, 2025</div>
-                <h3 className="text-xl font-semibold mb-3">Virtual Support Group</h3>
-                <p className="text-gray-600 mb-4">Share experiences and strategies for managing caregiver stress</p>
-                <Button variant="outline" className="border-purple text-purple-900 hover:bg-purple hover:text-white">
-                  Register
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">June 22, 2025</div>
-                <h3 className="text-xl font-semibold mb-3">Caregiving Workshop</h3>
-                <p className="text-gray-600 mb-4">Learn practical skills for daily caregiving challenges</p>
-                <Button variant="outline" className="border-purple text-purple-900 hover:bg-purple hover:text-white">
-                  Register
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">July 5, 2025</div>
-                <h3 className="text-xl font-semibold mb-3">Self-Care Session</h3>
-                <p className="text-gray-600 mb-4">Focus on wellness practices for caregivers</p>
-                <Button variant="outline" className="border-purple text-purple-900 hover:bg-purple hover:text-white">
-                  Register
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       
       <Footer />

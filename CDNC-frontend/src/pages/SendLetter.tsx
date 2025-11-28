@@ -24,16 +24,19 @@ interface MPContact {
   email?: string;
 }
 
-const defaultLetterTemplate = `Dear [Representative Name],
+const defaultLetterTemplate = `Dear [MP Name],
 
-I am writing as a constituent to advocate for stronger support for unpaid caregivers in our community.
+I am a parent and lifetime caregiver for my [child/adult child/family member] with a disability.
 
 [Add your personal experience or story here.]
 
-Caregivers provide essential care that keeps families together, yet too often do so without financial support, respite services, or mental-health resources.
+Like thousands of families across Canada, we provide essential care around the clock—care that allows our loved ones to live safely at home and participate in their communities. Yet, despite saving governments billions, we receive little financial or structural support. Families like ours are living in disability poverty. Many are forced to give up paid work, live on one income, and spend thousands monthly on medical and accessibility costs.
 
-Thank you for your leadership and attention to this important issue.
+We urgently need a federal Lifetime Caregiver Benefit, accessible housing fund, and tripled Child Disability Benefit so families are not punished for caring.
 
+Will you stand with families like mine and make lifetime caregiving a national priority?
+
+Sincerely,
 [Your Name]
 [City, Postal Code]
 [Email]`;
@@ -68,13 +71,6 @@ const SendLetter = () => {
       setLetterError(null);
     }
   };
-
-  const successMessages = [
-    "Your draft can help spotlight the needs of caregivers across the country.",
-    "Thank you for being a voice for caregivers in your community.",
-    "Personalized advocacy letters influence policy changes for caregivers.",
-    "Together, our voices are creating positive change for caregivers.",
-  ];
 
   const selectedRepresentative = useMemo(
     () => mpList.find((mp) => mp.id === selectedMpId),
@@ -257,15 +253,15 @@ const SendLetter = () => {
         <section className="bg-purple-100 border-b border-gray-200 py-8 px-4 sm:px-8">
           <div className="max-w-screen-xl mx-auto">
             <h1 className="text-3xl font-bold text-purple-900 mb-2">
-              Send Letter to Your MP
+              Send a letter to your MP
             </h1>
             <p className="text-gray-600 mb-6">
-              Connect with your representative to advocate for caregiver support in your community.
+              Send a letter to your member of Parliament to advocate for better support and recognition for caregivers.
             </p>
             
             {/* Compact MP Search */}
             <div className="bg-gray-50 rounded-lg p-4 max-w-2xl ">
-              <h2 className="text-lg font-semibold text-gray-900 mb-3">Find Your Representative</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Find Your MP</h2>
               <form onSubmit={handleSearchRepresentatives} className="flex gap-2 mb-3" noValidate>
                 <Input
                   type="text"
@@ -511,27 +507,6 @@ const SendLetter = () => {
                     <Button type="submit" className="bg-purple-600 text-white">
                       <Mail /> Generate letter
                     </Button>
-                    <Button type="button" variant="ghost" onClick={handleCopyDraft}>
-                      <Copy /> Copy draft
-                    </Button>
-                    <Button type="button" variant="secondary" onClick={handleResetDraft}>
-                      <RotateCw /> Reset template
-                    </Button>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                            type="button"
-                            className=" border border-purple-400"
-                            onClick={handleOpenMail}>
-                            <Send /> Send Email
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          Send email
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
                   </div>
                 </form>
               </div>
@@ -549,6 +524,29 @@ const SendLetter = () => {
                 <p className="text-sm text-gray-500 mt-3">
                   You can edit this draft directly. When you&apos;re ready, copy the text above and send it using your preferred communication channel.
                 </p>
+                {/* Action buttons moved here */}
+                <div className="flex flex-wrap justify-center gap-4 pt-3">
+                  <Button type="button" variant="ghost" onClick={handleCopyDraft} className="hover:text-purple-700">
+                    <Copy /> Copy draft
+                  </Button>
+                  <Button type="button" variant="secondary" onClick={handleResetDraft} className="hover:text-purple-700">
+                    <RotateCw /> Reset template
+                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          className="border hover:text-purple-700"
+                          onClick={handleOpenMail}
+                        >
+                          <Send /> Send Email
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Send email</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
             </section>
           </div>
