@@ -1,4 +1,5 @@
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaTwitter } from "react-icons/fa";
+import { Earth, Copy } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -14,50 +15,34 @@ export const Footer = () => {
       </div>
 
       <div className="container mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-16 px-4 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-16 px-4 items-start">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="col-span-1 md:col-span-2 lg:col-span-1 flex flex-col h-full"
+            className="flex flex-col h-full"
           >
             <h3 className="text-xl font-bold mb-4 text-white">Childhood Disability Network Canada</h3>
             <p className="mb-4 text-sm opacity-80 text-white">
               Supporting caregivers and their children with disabilities through advocacy and resources.
             </p>
-            <div className="flex gap-4 mt-auto">
+            <div className="flex gap-3 items-center">
               <a 
-                href="#" 
+                href="https://www.facebook.com/share/1EUaJR1PwT/" 
                 className="text-white hover:text-accent-main transition-colors"
                 tabIndex={0} 
                 aria-label="Facebook"
               >
-                <FaFacebook className="text-xl" />
+                <FaFacebook className="text-2xl" />
               </a>
               <a 
-                href="#" 
+                href="https://www.odcoalition.com" 
                 className="text-white hover:text-accent-main transition-colors" 
                 tabIndex={0} 
                 aria-label="Twitter"
               >
-                <FaTwitter className="text-xl" />
-              </a>
-              <a 
-                href="#" 
-                className="text-white hover:text-accent-main transition-colors" 
-                tabIndex={0} 
-                aria-label="Instagram"
-              >
-                <FaInstagram className="text-xl" />
-              </a>
-              <a 
-                href="#" 
-                className="text-white hover:text-accent-main transition-colors" 
-                tabIndex={0} 
-                aria-label="LinkedIn"
-              >
-                <FaLinkedin className="text-xl" />
+                <Earth className="text-2xl" />
               </a>
             </div>
           </motion.div>
@@ -67,14 +52,13 @@ export const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
-            className="flex flex-col h-full"
+            className="flex flex-col h-full mx-10"
           >
             <h3 className="text-xl font-bold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2 flex-1">
               <li>
                 <Link
                   to="/"
-                  onClick={() => window.location.reload()}
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
                   aria-label="Reload page"
@@ -84,7 +68,7 @@ export const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/resources" 
+                  to="/resources#top" 
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
                 >
@@ -93,7 +77,7 @@ export const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/join-community" 
+                  to="/join-community#top-content" 
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
                 >
@@ -102,11 +86,11 @@ export const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/" 
+                  to="/advocacy#about-us" 
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
                 >
-                  Contact
+                  About Us
                 </Link>
               </li>
             </ul>
@@ -146,7 +130,9 @@ export const Footer = () => {
                   aria-label="Copy email address to clipboard"
                 >
                   childhooddisabilitynetwork@gmail.com
+                  <Copy className="inline-block ml-4 text-white" />
                 </button>
+                
               </p>
             </div>
           </motion.div>
@@ -157,7 +143,7 @@ export const Footer = () => {
             &copy; {currentYear} Childhood Disability Network Canada. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex gap-2 text-sm">
-            Made  with  ❤️  by  
+            Made with ❤️ by
             <a
               href="https://www.linkedin.com/in/sid-lamba/"
               target="_blank"
@@ -168,7 +154,8 @@ export const Footer = () => {
             >
               Siddharth Lamba
             </a>
-            | <a
+            |
+            <a
               href="https://www.linkedin.com/in/bhavyashah2503/"
               target="_blank"
               rel="noopener noreferrer"
@@ -177,8 +164,9 @@ export const Footer = () => {
               aria-label="Bhavya Shah LinkedIn (opens in new tab)"
             >
               Bhavya Shah
-            </a>|
-             <a
+            </a>
+            |
+            <a
               href="https://www.linkedin.com/in/patel-mohamedsaif-45ba69260/"
               target="_blank"
               rel="noopener noreferrer"

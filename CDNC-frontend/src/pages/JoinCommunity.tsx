@@ -2,12 +2,14 @@ import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
 import { RunningBanner } from "@/components/Support/RunningBanner";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import { createMember } from "@/lib/members";
 
 const JoinCommunity = () => {
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -47,6 +49,21 @@ const JoinCommunity = () => {
 
     return nextErrors;
   };
+
+  useEffect(() => {
+    // If there's a hash, attempt to scroll to that element; otherwise, scroll to top
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +143,7 @@ const JoinCommunity = () => {
       <Header />
       
       <main className="pt-16">
-        <section className="bg-purple-light/30 py-16 px-8">
+        <section className="bg-purple-light/30 py-16 px-8"  id="top-content">
           <div className="max-w-screen-xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-purple-900">Join Our Caregiver Community</h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8">

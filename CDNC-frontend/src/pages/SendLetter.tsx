@@ -522,7 +522,7 @@ const SendLetter = () => {
                   className="min-h-[400px]"
                 />
                 <p className="text-sm text-gray-500 mt-3">
-                  You can edit this draft directly. When you&apos;re ready, copy the text above and send it using your preferred communication channel.
+                  When you are ready, copy the text and send it through your preferred communication channel. We do not send correspondence on your behalf and assume no responsibility for the content or delivery of messages composed here.
                 </p>
                 {/* Action buttons moved here */}
                 <div className="flex flex-wrap justify-center gap-4 pt-3">

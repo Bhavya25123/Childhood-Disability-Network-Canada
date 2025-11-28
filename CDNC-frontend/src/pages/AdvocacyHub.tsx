@@ -124,7 +124,7 @@ const AdvocacyHub = () => {
         </section>
 
         {/* About Us Section */}
-        <section className="py-20 px-6 bg-white">
+          <section id="about-us" className="py-20 px-6 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-extrabold text-purple-900 tracking-tight">About Us</h2>

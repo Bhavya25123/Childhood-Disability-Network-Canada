@@ -24,12 +24,27 @@ const Resources = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    // Scroll behavior: if a hash exists, scroll that element into view; else scroll to top
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [location]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow pt-16">
         {/* Hero Section */}
-        <section className="bg-purple-light/30 py-16 px-8">
+        <section id="top" className="bg-purple-light/30 py-16 px-8">
           <div className="max-w-screen-xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-6">Government Funding and Support</h1>
             <p className=" md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
