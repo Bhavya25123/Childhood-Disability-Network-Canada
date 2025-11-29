@@ -6,18 +6,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Book, FileText, Link, Search, Globe, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import KnowledgeHub from "@/components/faqs";
 
 const Resources = () => {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState("guides");
+  const [activeTab, setActiveTab] = useState("national");
 
   useEffect(() => {
     // Extract fragment from URL (remove the # character)
     const fragment = location.hash.replace("#", "");
     
     // Set active tab based on fragment if it exists and corresponds to a valid tab
-    if (fragment && ["guides", "caregiving", "financial", "community", "national", "provincial"].includes(fragment)) {
+    if (fragment && ["national","guides", "caregiving", "financial", "community", "provincial"].includes(fragment)) {
       // Map "caregiving" to "guides" if needed (since ResourcesSection uses #caregiving but tab is "guides")
       const tabValue = fragment === "caregiving" ? "guides" : fragment;
       setActiveTab(tabValue);
@@ -94,6 +93,16 @@ const Resources = () => {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="mb-2 border-b overflow-x-auto">
                 <TabsList className="bg-transparent mb-[-1px] flex-nowrap inline-flex w-full min-w-max md:w-auto">
+                  <TabsTrigger value="national" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">National Resources</span>
+                    <span className="sm:hidden">National</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="provincial" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
+                    <MapPin className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Provincial Resources</span>
+                    <span className="sm:hidden">Provincial</span>
+                  </TabsTrigger>
                   <TabsTrigger value="guides" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
                     <Book className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
                     <span className="hidden sm:inline">Caregiving Guides</span>
@@ -108,16 +117,6 @@ const Resources = () => {
                     <Link className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
                     <span className="hidden sm:inline">Community Resources</span>
                     <span className="sm:hidden">Community</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="national" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
-                    <Globe className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">National Resources</span>
-                    <span className="sm:hidden">National</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="provincial" className="data-[state=active]:border-b-2 data-[state=active]:border-purple rounded-none whitespace-nowrap text-xs md:text-sm flex-shrink-0">
-                    <MapPin className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
-                    <span className="hidden sm:inline">Provincial Resources</span>
-                    <span className="sm:hidden">Provincial</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -180,6 +179,61 @@ const Resources = () => {
                       essential-care-partner/overview/?utm_source=chatgpt.com"
                   />
                 </div>
+                {/* Featured Resource */}
+                    <div className="max-w-screen-xl mx-auto mt-10 mb-10">
+                      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div className="md:flex">
+                          <div className="md:w-1/2 bg-purple-light p-8 flex items-center justify-center">
+                            <div className="text-center md:text-left">
+                              <h3 className="text-2xl font-bold text-purple-900 mb-4">A Guide for Caregivers by Tanya Radford</h3>
+                              <p className="text-gray-700 mb-6">
+                                A Canada-wide handbook offering practical advice, 
+                                emotional support strategies, and navigation tips 
+                                for caregivers, with sections on health management, 
+                                communication, and links to national resources.
+                              </p>
+                              <Button className="bg-purple-900 text-white hover:bg-purple-dark" onClick={() => {
+                                // Trigger file download
+                                const link = document.createElement('a');
+                                link.target = "_blank";
+                                link.href = 'https://mscanada.ca/sites/default/files/documents/2024-09/1-original_2.pdf?utm_source=chatgpt.com'; // Ensure this path is correct
+                                link.download = 'Caregivers_Comprehensive_Handbook.pdf';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}>
+                                Download Free PDF
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="md:w-1/2 p-8">
+                            <h4 className="text-xl font-semibold mb-4">What's Inside:</h4>
+                            <ul className="space-y-3">
+                              <li className="flex items-start">
+                                <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">1.</div>
+                                <span>Step-by-step guides for new caregivers</span>
+                              </li>
+                              <li className="flex items-start">
+                                <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">2.</div>
+                                <span>Understanding the caregiver role and managing daily responsibilities</span>
+                              </li>
+                              <li className="flex items-start">
+                                <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">3.</div>
+                                <span>Strategies for balancing physical health, nutrition, and mobility needs</span>
+                              </li>
+                              <li className="flex items-start">
+                                <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">4.</div>
+                                <span>Emotional support and communication tips for caregivers and families</span>
+                              </li>
+                              <li className="flex items-start">
+                                <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">5.</div>
+                                <span>Self-care practices and burnout prevention techniques</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
               </TabsContent>
 
               <TabsContent value="financial" className="mt-0">
@@ -306,64 +360,6 @@ const Resources = () => {
                 <ProvincialResources />
               </TabsContent>
             </Tabs>
-          </div>
-        </section>
-
-        {/* Featured Resource */}
-        <section className="bg-gray-50 py-16 px-4">
-          <div className="max-w-screen-xl mx-auto">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="md:flex">
-                <div className="md:w-1/2 bg-purple-light p-8 flex items-center justify-center">
-                  <div className="text-center md:text-left">
-                    <h3 className="text-2xl font-bold text-purple-900 mb-4">A Guide for Caregivers by Tanya Radford</h3>
-                    <p className="text-gray-700 mb-6">
-                      A Canada-wide handbook offering practical advice, 
-                      emotional support strategies, and navigation tips 
-                      for caregivers, with sections on health management, 
-                      communication, and links to national resources.
-                    </p>
-                    <Button className="bg-purple-900 text-white hover:bg-purple-dark" onClick={() => {
-                      // Trigger file download
-                      const link = document.createElement('a');
-                      link.target = "_blank";
-                      link.href = 'https://mscanada.ca/sites/default/files/documents/2024-09/1-original_2.pdf?utm_source=chatgpt.com'; // Ensure this path is correct
-                      link.download = 'Caregivers_Comprehensive_Handbook.pdf';
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    }}>
-                      Download Free PDF
-                    </Button>
-                  </div>
-                </div>
-                <div className="md:w-1/2 p-8">
-                  <h4 className="text-xl font-semibold mb-4">What's Inside:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">1.</div>
-                      <span>Step-by-step guides for new caregivers</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">2.</div>
-                      <span>Understanding the caregiver role and managing daily responsibilities</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">3.</div>
-                      <span>Strategies for balancing physical health, nutrition, and mobility needs</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">4.</div>
-                      <span>Emotional support and communication tips for caregivers and families</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="h-6 w-6 rounded-full bg-purple-light flex items-center justify-center text-purple-900 mr-1 mt-0.5">5.</div>
-                      <span>Self-care practices and burnout prevention techniques</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
       </main>

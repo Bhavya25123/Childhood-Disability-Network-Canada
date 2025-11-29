@@ -1,5 +1,7 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import ImageRunningBanner from "@/components/Support/ImageRunningBanner";
+
+const ImageRunningBanner = lazy(() => import("@/components/Support/ImageRunningBanner"));
 
 export const AdvocacySection = () => {
   return (
@@ -20,12 +22,12 @@ export const AdvocacySection = () => {
 
           <h4 className="text-xl font-semibold text-gray-800 mb-3">Recommendations for Children &amp; Youth with Disabilities</h4>
           <ol className="list-decimal list-inside space-y-2 text-gray-800 mb-8">
-            <li>Create a Lifetime Caregiver Income Benefit</li>
+            <li id="header-1">Create a Lifetime Caregiver Income Benefit</li>
             <li>Triple the Child Disability Benefit</li>
             <li>Create Home &amp; Vehicle Accessibility Grants</li>
           </ol>
 
-          <h4 className="text-xl font-semibold text-gray-800 mb-3">1. Necessity of a Lifetime Caregiver Income Benefit</h4>
+          <h4 className="text-xl font-semibold text-gray-800 mb-3" >1. Necessity of a Lifetime Caregiver Income Benefit</h4>
           <p className="text-gray-700 leading-relaxed mb-4">
             Family caregiving is at the core of what sustains children &amp; youth with complex care needs. Direct care and care coordination is a full-time job and creates huge barriers to employment. (Finlay et al. 2023; youtube 2022)
           </p>
@@ -54,7 +56,7 @@ export const AdvocacySection = () => {
           <p className="text-gray-700 leading-relaxed mb-6">
             Shows a complex web of bubbles linked to a child who is centred within a vast matrix of care providers with close to 100 contacts throughout the community, hospital, and home. This means that the caregiver—traditionally the mother of a child with complex needs—is using all her waking time either coordinating care or providing direct care to her child 24 hours, 7 days a week. There is no job which requires such skills, focus, and compassion with no compensation. This work is done with tremendous love, but it takes a financial, physical, and mental health toll on families and most commonly mothers. (Bourke-Taylor et al. 2010)
           </p>
-          <p className="text-gray-700 leading-relaxed mb-6">
+          <p className="text-gray-700 leading-relaxed mb-6" id="header-2">
             The province of New Brunswick recognized the significant cost involved in raising children with complex needs (such as emotional, behavioural, medical, or related to mental health or trauma) is valued at $3500 a month with an additional $1769 in 2022. These funds are paid to adults (foster care parents) to stay at home and focus on their care. (Cave 2022)
           </p>
           <p className="text-gray-700 leading-relaxed mb-8 font-semibold">
@@ -74,7 +76,7 @@ export const AdvocacySection = () => {
           <p className="text-gray-700 leading-relaxed mb-4">
             Income testing the CDB is financially challenging for families. We recommend shifting the income threshold higher to better reflect the financial demands of having a child with complex care needs. The current threshold for reducing the CDB is $71,060 to $165,000. We recommend removing altogether or setting the reduction at $150K and scaling to $250K.
           </p>
-          <p className="text-gray-700 leading-relaxed mb-8">
+          <p className="text-gray-700 leading-relaxed mb-8" id="header-3">
             We understand that the current plans for the new Canada Disability Benefit are aimed at adults between the ages 18-65. We ask for consideration of automatically transitioning those people with disabilities whose caregivers are receiving the Child Disability Benefit into the Canada Disability Benefit program upon their 18th birthday.
           </p>
 
@@ -121,17 +123,23 @@ export const AdvocacySection = () => {
           <div className="max-w-screen-xl mx-auto">
             <h2 className="bg-gradient-to-r from-purple-900 via-indigo-800 to-blue-700 bg-clip-text text-transparent text-center font-semibold mb-10">Caregiver Advocacy Moments</h2>
             <h2 className="sr-only">Caregiver Advocacy Moments</h2>
-            <ImageRunningBanner
-              items={[
-                { src: "/images/joc-1.jpg", alt: "Parent caregiver and child at home with ICU level medical equipment and nursing care" },
-                { src: "/images/joc-2.jpg", alt: "Young children advocating for better supports and services, visiting Member of Provincial Parliament (MPPs) at Queen’s Park, Ontario Legislature" },
-                { src: "/images/joc-3.jpg", alt: "Caregiver advocating to Member of Parliament (MP)" },
-              ]}
-              maxWidthClass="max-w-5xl"
-              heightClass="h-64 md:h-100 lg:h-[580px]"
-              className="rounded-xl"
-              interval={5500}
-            />
+            <Suspense fallback={
+              <div className="h-64 md:h-100 lg:h-[580px] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-900 border-r-transparent"></div>
+              </div>
+            }>
+              <ImageRunningBanner
+                items={[
+                  { src: "/images/joc-1.jpg", alt: "Parent caregiver and child at home with ICU level medical equipment and nursing care" },
+                  { src: "/images/joc-2.jpg", alt: "Young children advocating for better supports and services, visiting Member of Provincial Parliament (MPPs) at Queen's Park, Ontario Legislature" },
+                  { src: "/images/joc-3.jpg", alt: "Caregiver advocating to Member of Parliament (MP)" },
+                ]}
+                maxWidthClass="max-w-5xl"
+                heightClass="h-64 md:h-100 lg:h-[580px]"
+                className="rounded-xl"
+                interval={5500}
+              />
+            </Suspense>
           </div>
         </section>
     </section>

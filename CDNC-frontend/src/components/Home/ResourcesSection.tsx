@@ -88,19 +88,19 @@ export const ResourcesSection = () => {
             title="Create a Lifetime Caregiver Income Benefit"
             description="A Lifetime Caregiver Income benefit will recognize
              the importance and full-time work associated with being a caregiver of a loved one."
-            link="/resources#caregiving"
+            link="#header-1"
           />
           <ResourceCard
             icon={<FiBarChart className="text-2xl" />}
             title="Tripling the Child Disability Benefit"
             description="Improvements to the Child Disability Benefit are needed to ensure the Benefit is effective in providing help as most needed."
-            link="/resources#financial"
+            link="#header-2"
           />
             <ResourceCard
             icon={<FaWheelchair className="text-2xl" />}
             title="Accessibility Grants for Home and Vehicle Modifications"
             description="Tax credits such as the Multigenerational Home Renovation tax credit must include families with children with disabilities."
-            link="/resources#community"
+            link="#header-3"
           />
         </div>
       </div>
