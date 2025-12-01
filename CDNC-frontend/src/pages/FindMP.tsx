@@ -159,12 +159,6 @@ const FindMP = () => {
           </div>
         </section>
 
-        <RunningBanner
-          items={successStories}
-          className="bg-purple-50 text-purple-900 py-3"
-          speed={5}
-        />
-
         {/* This section is now always rendered */}
         <section className="py-16 px-4 sm:px-8">
           <div className="max-w-screen-xl mx-auto">

@@ -1,4 +1,5 @@
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaTwitter } from "react-icons/fa";
+import { Earth, Copy } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -14,50 +15,34 @@ export const Footer = () => {
       </div>
 
       <div className="container mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-16 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-16 px-4 items-start">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="col-span-1 md:col-span-2 lg:col-span-1"
+            className="flex flex-col h-full"
           >
-            <h3 className="text-xl font-bold mb-4">Caregiver Support Network</h3>
+            <h3 className="text-xl font-bold mb-4 text-white">Childhood Disability Network Canada</h3>
             <p className="mb-4 text-sm opacity-80 text-white">
-              Supporting caregivers with community, resources, and advocacy.
+              Supporting caregivers and their children with disabilities through advocacy and resources.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3 items-center">
               <a 
-                href="#" 
+                href="https://www.facebook.com/share/1EUaJR1PwT/" 
                 className="text-white hover:text-accent-main transition-colors"
                 tabIndex={0} 
                 aria-label="Facebook"
               >
-                <FaFacebook className="text-xl" />
+                <FaFacebook className="text-2xl" />
               </a>
               <a 
-                href="#" 
+                href="https://www.odcoalition.com" 
                 className="text-white hover:text-accent-main transition-colors" 
                 tabIndex={0} 
                 aria-label="Twitter"
               >
-                <FaTwitter className="text-xl" />
-              </a>
-              <a 
-                href="#" 
-                className="text-white hover:text-accent-main transition-colors" 
-                tabIndex={0} 
-                aria-label="Instagram"
-              >
-                <FaInstagram className="text-xl" />
-              </a>
-              <a 
-                href="#" 
-                className="text-white hover:text-accent-main transition-colors" 
-                tabIndex={0} 
-                aria-label="LinkedIn"
-              >
-                <FaLinkedin className="text-xl" />
+                <Earth className="text-2xl" />
               </a>
             </div>
           </motion.div>
@@ -67,108 +52,45 @@ export const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
+            className="flex flex-col h-full md:mx-10"
           >
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-4 text-white">Quick Links</h3>
+            <ul className="space-y-2 flex-1">
               <li>
-                <Link 
-                  to="/" 
+                <Link
+                  to="/"
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
+                  aria-label="Reload page"
                 >
                   Home
                 </Link>
               </li>
               <li>
                 <Link 
-                  to="/about" 
+                  to="/resources#top" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
+                  Government Funding and Support
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/join-community#top-content" 
+                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  tabIndex={0}
+                >
+                  Join Our Network
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/advocacy#about-us" 
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
                 >
                   About Us
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/resources" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Resources
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/community" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Community
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/contact" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-xl font-bold mb-4">Resources</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link 
-                  to="/resources/health" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Health Resources
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/resources/financial" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Financial Assistance
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/resources/support-groups" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Support Groups
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/resources/education" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Educational Materials
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/resources/advocacy" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  Advocacy Tools
                 </Link>
               </li>
             </ul>
@@ -179,59 +101,81 @@ export const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             viewport={{ once: true }}
+            className="flex flex-col h-full"
           >
-            <h3 className="text-xl font-bold mb-4 ">Contact Us</h3>
-            <address className="not-italic">
-              <p className="mb-2 text-white">123 Support Street</p>
-              <p className="mb-2 text-white">Care City, CA 90000</p>
+            <h3 className="text-xl font-bold mb-4 text-white">Contact Us</h3>
+            <div className="flex-1 flex flex-col justify-start">
               <p className="mb-2 text-white">
-                <a 
-                  href="mailto:info@caregivernetwork.org" 
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const email = "childhooddisabilitynetwork@gmail.com";
+                    try {
+                      await navigator.clipboard.writeText(email);
+                    } catch {
+                      // Fallback for older browsers
+                      const el = document.createElement("textarea");
+                      el.value = email;
+                      el.setAttribute("readonly", "");
+                      el.style.position = "absolute";
+                      el.style.left = "-9999px";
+                      document.body.appendChild(el);
+                      el.select();
+                      document.execCommand("copy");
+                      document.body.removeChild(el);
+                    }
+                  }}
                   className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   tabIndex={0}
+                  aria-label="Copy email address to clipboard"
                 >
-                  info@caregivernetwork.org
-                </a>
+                  childhooddisabilitynetwork@gmail.com
+                  <Copy className="inline-block ml-4 text-white" />
+                </button>
+                
               </p>
-              <p>
-                <a 
-                  href="tel:+11234567890" 
-                  className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                  tabIndex={0}
-                >
-                  (123) 456-7890
-                </a>
-              </p>
-            </address>
+            </div>
           </motion.div>
         </div>
 
         <div className="border-t border-white border-opacity-20 py-6 px-4 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm opacity-80 text-white">
-            &copy; {currentYear} Caregiver Support Network. All rights reserved.
+            &copy; {currentYear} Childhood Disability Network Canada. All rights reserved.
           </p>
-          <div className="mt-4 md:mt-0 flex gap-4 text-sm">
-            <Link 
-              to="/privacy" 
+          <div className="mt-4 md:mt-0 flex gap-2 text-sm">
+            Made with ❤️ by
+            <a
+              href="https://www.linkedin.com/in/sid-lamba/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               tabIndex={0}
+              aria-label="Siddharth Lamba LinkedIn (opens in new tab)"
             >
-              Privacy Policy
-            </Link>
-            <Link 
-              to="/terms" 
+              Siddharth Lamba
+            </a>
+            |
+            <a
+              href="https://www.linkedin.com/in/bhavyashah2503/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               tabIndex={0}
+              aria-label="Bhavya Shah LinkedIn (opens in new tab)"
             >
-              Terms of Service
-            </Link>
-            <Link 
-              to="/accessibility" 
+              Bhavya Shah
+            </a>
+            |
+            <a
+              href="https://www.linkedin.com/in/patel-mohamedsaif-45ba69260/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white hover:text-accent-main transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
               tabIndex={0}
+              aria-label="Md. Saif Patel LinkedIn (opens in new tab)"
             >
-              Accessibility
-            </Link>
+              Md. Saif Patel
+            </a>
           </div>
         </div>
       </div>

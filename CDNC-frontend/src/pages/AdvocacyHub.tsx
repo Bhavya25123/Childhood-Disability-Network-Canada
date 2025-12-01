@@ -1,9 +1,85 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useState } from "react";
 import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
 import { Link } from "react-router-dom";
 import { Megaphone, Handshake, FileText, Vote, Users, Mail } from "lucide-react";
+import { MdPeopleAlt } from "react-icons/md";
+import { ChevronDown } from "lucide-react";
+
+
+// Inline accordion for "Advocacy How To's" replicating FAQ pop-down style
+const howToItems = [
+  {
+    title: "In Your Letter",
+    content: "Briefly narrate your personal experience as a concerned community member or caregiver.",
+  },
+  {
+    title: "Request a Meeting",
+    content:
+      "Explicitly ask for an appointment with your MP to discuss these matters further. Remember, as a constituent, you have the right to request their attention on issues that matter to you.",
+  },
+  {
+    title: "If You Don't Hear Back",
+    content:
+      "Follow up with your MP's office by calling or emailing, referencing your previous communication. Persistence is key to getting your voice heard.",
+  },
+  {
+    title: "Remember",
+    content:
+      "Your story has the power to drive change. By taking action, you are advocating for a more inclusive and supportive society for caregivers and those with disabilities.",
+  },
+];
+
+function HowToAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (idx: number) => {
+    setOpenIndex(openIndex === idx ? null : idx);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-purple-900 mb-3 text-center tracking-tight">Advocacy How To’s</h2>
+      <p className="text-gray-600 mb-10 text-center max-w-2xl mx-auto">
+        Quick, practical guidance to take impactful advocacy steps.
+      </p>
+      <div className="space-y-3">
+        {howToItems.map((item, idx) => (
+          <div
+            key={item.title}
+            className="border border-gray-200 rounded-2xl bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-shadow"
+          >
+            <button
+              onClick={() => toggle(idx)}
+              className="flex w-full justify-between items-center p-5 text-left focus:outline-none focus:ring-2 focus:ring-purple-300 rounded-2xl"
+              aria-expanded={openIndex === idx}
+              aria-controls={`howto-content-${idx}`}
+            >
+              <span className="font-semibold text-gray-800">{item.title}</span>
+              <span
+                className={`h-5 w-5 text-gray-500 transform transition-transform duration-300 inline-block ${
+                  openIndex === idx ? "rotate-180" : ""
+                }`}
+              >
+                <ChevronDown />
+              </span>
+            </button>
+            {openIndex === idx && (
+              <div id={`howto-content-${idx}`} className="px-5 pb-5 -mt-2 text-gray-700 leading-relaxed">
+                <div className="border-t border-gray-200 pt-4">
+                  {item.content}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 const AdvocacyHub = () => {
   return (
@@ -11,21 +87,21 @@ const AdvocacyHub = () => {
       <Header />
       <main className="flex-grow pt-16">
         {/* Hero Section */}
-        <section className="bg-gray-50 py-16 px-8">
+        <section className="bg-white py-16 px-8">
           <div className="max-w-screen-xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-6">Advocacy Hub</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-purple-900 mb-4">Advocacy</h1>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Join our movement to advocate for better support and recognition for caregivers across the country.
-              Together, we can make a difference.
+              Join our network and advocate for better support and recognition 
+              for caregivers across the country. Together, we can make a difference!
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button asChild className="bg-purple hover:bg-purple-dark font-bold ">
-                <Link to="/find-mp"
+                <Link to="https://www.ourcommons.ca/members/en"
                 className="items-center justify-center gap-3
                  bg-purple-900 hover:bg-purple-800 hover:text-white text-white
                  hover:shadow-xl hover:scale-105">
                   <i className="ti ti-search text-xl" />
-                  <Vote className="mr-2" />
+                  <MdPeopleAlt className="mr-2" />
                   <span>Find Your MP</span>
                   <i className="ti ti-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -40,108 +116,60 @@ const AdvocacyHub = () => {
           </div>
         </section>
 
-        {/* Current Campaigns */}
-        <section className="bg-gray-50 py-16 px-4">
+        {/* Advocacy How To's */}
+        <section className="bg-gradient-to-b from-gray-50 to-gray-100 py-16 px-6">
           <div className="max-w-screen-xl mx-auto">
-            <h2 className="text-3xl font-bold text-purple-900 mb-8 text-center">Current Campaigns</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
-                <Megaphone className="text-purple-900 h-12 w-12 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Caregiver Recognition Act</h3>
-                <p className="text-gray-600 mb-4">
-                  Support legislation to formally recognize the essential role of family caregivers in our healthcare system.
-                </p>
-                <Button asChild variant="outline" className="w-full mt-2 border-purple text-purple-900 hover:bg-purple-light">
-                  <Link to="/send-letter">Learn More</Link>
-                </Button>
-              </Card>
-              
-              <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
-                <FileText className="text-purple-900 h-12 w-12 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Tax Credit Expansion</h3>
-                <p className="text-gray-600 mb-4">
-                  Advocate for expanded tax credits to help offset the financial burden faced by family caregivers.
-                </p>
-                <Button asChild variant="outline" className="w-full mt-2 border-purple text-purple-900 hover:bg-purple-light">
-                  <Link to="/send-letter">Learn More</Link>
-                </Button>
-              </Card>
-              
-              <Card className="p-6 shadow-md hover:shadow-lg transition-shadow">
-                <Handshake className="text-purple-900 h-12 w-12 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Respite Care Initiative</h3>
-                <p className="text-gray-600 mb-4">
-                  Support funding for expanded respite care services to provide caregivers with necessary breaks.
-                </p>
-                <Button asChild variant="outline" className="w-full mt-2 border-purple text-purple-900 hover:bg-purple-light">
-                  <Link to="/send-letter">Learn More</Link>
-                </Button>
-              </Card>
-            </div>
+            <HowToAccordion />
           </div>
         </section>
 
-        {/* Get Involved */}
-        <section className="bg-gray-100 py-16 px-4">
-          <div className="max-w-screen-xl mx-auto">
-            <h2 className="text-3xl font-bold text-purple-900 mb-8 text-center">Ways to Get Involved</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="p-6 shadow-md bg-gray-50 hover:shadow-lg transition-shadow">
-                <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <Vote className="text-purple-900 mr-2" />
-                  Contact Your Representatives
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Reach out to your local representatives to express your support for caregiver-friendly policies.
-                  Your voice matters in shaping legislation that affects caregivers.
-                </p>
-                <Button asChild className="bg-purple-900 text-white hover:bg-purple-800 hover:text-white flex">
-                  <Link to="/find-mp">Find Your MP</Link>
-                </Button>
-              </Card>
-              
-              <Card className="p-6 shadow-md bg-gray-50 hover:shadow-lg transition-shadow">
-                <h3 className="text-xl font-semibold mb-4 flex items-center">
-                  <Users className="text-purple-900 mr-2" />
-                  Join Our Community
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Connect with other caregivers and advocates who are passionate about improving support for caregivers.
-                  Share your story and learn from others.
-                </p>
-                <Button asChild className="bg-purple-900 text-white hover:bg-purple-800 hover:text-white w-full mt-6">
-                  <Link to="/join-community">Join Now</Link>
-                </Button>
-              </Card>
+        {/* About Us Section */}
+          <section id="about-us" className="py-20 px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-purple-900 tracking-tight">About Us</h2>
+              <p className="text-gray-600 mt-3 max-w-2xl mx-auto">Childhood Disability Network Canada (CDNC) is a family-led group connecting parents, caregivers, and professionals to share resources and advocate for change.</p>
             </div>
-          </div>
-        </section>
 
-        {/* Success Stories - This section is replaced with the one from SendLetter.tsx */}
-        <section className="py-16 px-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6 text-purple-900">Success Stories</h2>
-            <p className="text-lg mb-12 text-gray-600">
-              See how advocacy has made a difference for caregivers nationwide
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">Tax Relief</div>
-                <h3 className="text-xl font-semibold mb-3">Caregiver Tax Credit</h3>
-                <p className="text-gray-600">5,000+ letters helped secure a new tax credit for family caregivers in 2022.</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="group bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3 mb-3">
+                  <Users className="h-6 w-6 text-purple-800" />
+                  <h3 className="text-lg font-semibold text-purple-900">What is CDNC?</h3>
+                </div>
+                <p className="text-gray-700">We connect families and professionals who support children and youth with disabilities, sharing information, resources, and advocacy to help families thrive.</p>
               </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">Healthcare Access</div>
-                <h3 className="text-xl font-semibold mb-3">Caregiver Health Program</h3>
-                <p className="text-gray-600">Advocacy secured $10M in funding for caregiver health screening programs.</p>
+
+              <div className="group bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3 mb-3">
+                  <Handshake className="h-6 w-6 text-purple-800" />
+                  <h3 className="text-lg font-semibold text-purple-900">“Lifetime caregiver”</h3>
+                </div>
+                <p className="text-gray-700">Care is lifelong. CDNC supports families at every stage — from early childhood through adulthood.</p>
               </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">Respite Care</div>
-                <h3 className="text-xl font-semibold mb-3">Community Support</h3>
-                <p className="text-gray-600">Local advocacy expanded respite care services in 15 counties nationwide.</p>
+
+              <div className="group bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3 mb-3">
+                  <Megaphone className="h-6 w-6 text-purple-800" />
+                  <h3 className="text-lg font-semibold text-purple-900">Get involved</h3>
+                </div>
+                <p className="text-gray-700">Join our mailing list, attend events, share your story, or participate in advocacy projects. Visit <a href="http://ChildhoodDisabilityNetwork.ca" target="_blank" rel="noopener noreferrer" className="text-purple-700 underline">ChildhoodDisabilityNetwork.ca</a> to sign up.</p>
+              </div>
+
+              <div className="group bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3 mb-3">
+                  <Vote className="h-6 w-6 text-purple-800" />
+                  <h3 className="text-lg font-semibold text-purple-900">Our advocacy</h3>
+                </div>
+                <p className="text-gray-700">We speak up for fair access to supports, inclusive schools, accessible housing, and direct funding — helping children stay at home, not in institutions.</p>
+              </div>
+
+              <div className="group bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3 mb-3">
+                  <FileText className="h-6 w-6 text-purple-800" />
+                  <h3 className="text-lg font-semibold text-purple-900">Our partners</h3>
+                </div>
+                <p className="text-gray-700">We partner with families, community groups, and government leaders to create positive change.</p>
               </div>
             </div>
           </div>
