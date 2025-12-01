@@ -2,12 +2,14 @@ import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
 import { RunningBanner } from "@/components/Support/RunningBanner";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import { createMember } from "@/lib/members";
 
 const JoinCommunity = () => {
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -47,6 +49,21 @@ const JoinCommunity = () => {
 
     return nextErrors;
   };
+
+  useEffect(() => {
+    // If there's a hash, attempt to scroll to that element; otherwise, scroll to top
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +143,7 @@ const JoinCommunity = () => {
       <Header />
       
       <main className="pt-16">
-        <section className="bg-purple-light/30 py-16 px-8">
+        <section className="bg-purple-light/30 py-16 px-8"  id="top-content">
           <div className="max-w-screen-xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-purple-900">Join Our Caregiver Community</h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8">
@@ -306,44 +323,6 @@ const JoinCommunity = () => {
                     We'll send you occasional updates about the community. You can opt out at any time.
                   </p>
               </form>
-            </div>
-          </div>
-        </section>
-        
-        <section className="py-16 px-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6 text-purple-900">Upcoming Community Events</h2>
-            <p className="text-lg mb-12 text-gray-600">
-              Join these virtual and in-person events to connect with other caregivers
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">June 15, 2025</div>
-                <h3 className="text-xl font-semibold mb-3">Virtual Support Group</h3>
-                <p className="text-gray-600 mb-4">Share experiences and strategies for managing caregiver stress</p>
-                <Button variant="outline" className="border-purple text-purple-900 hover:bg-purple hover:text-white">
-                  Register
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">June 22, 2025</div>
-                <h3 className="text-xl font-semibold mb-3">Caregiving Workshop</h3>
-                <p className="text-gray-600 mb-4">Learn practical skills for daily caregiving challenges</p>
-                <Button variant="outline" className="border-purple text-purple-900 hover:bg-purple hover:text-white">
-                  Register
-                </Button>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-purple/5">
-                <div className="text-purple-900 font-bold mb-2">July 5, 2025</div>
-                <h3 className="text-xl font-semibold mb-3">Self-Care Session</h3>
-                <p className="text-gray-600 mb-4">Focus on wellness practices for caregivers</p>
-                <Button variant="outline" className="border-purple text-purple-900 hover:bg-purple hover:text-white">
-                  Register
-                </Button>
-              </div>
             </div>
           </div>
         </section>

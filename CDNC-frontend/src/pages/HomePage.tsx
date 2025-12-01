@@ -11,8 +11,8 @@ export const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>Caregiver Support Network - Home</title>
-        <meta name="description" content="Supporting caregivers with community, resources, and advocacy." />
+        <title>Childhood Disability Network Canada - Home</title>
+        <meta name="description" content="Childhood Disability Network Canada" />
       </Helmet>
       
       <Header />

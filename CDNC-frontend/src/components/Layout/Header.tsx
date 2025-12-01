@@ -41,18 +41,22 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-white shadow-md" onKeyDown={handleKeyDown}>
-      <div className="max-w-screen-xl h-16 flex items-center justify-between mx-auto">
+      <div className="max-w-screen-xl h-16 flex items-center justify-between mx-auto px-4">
         <Link 
           to="/" 
-          className="flex items-center gap-2 text-purple-900 text-xl font-bold"
+          className="flex items-center gap-2 text-purple-900 font-bold"
           aria-label="Childhood Disability Network Canada - Homepage"
           tabIndex={0}
         >
-          <img src="/images/logo_heart.png" alt="CDNC Logo" className="h-9 w-auto" />
-          Childhood Disability Network Canada
+          <img src="/images/logo_heart.png" alt="CDNC Logo" className="h-8 md:h-9 w-auto" />
+          <span className="hidden md:inline text-xl">Childhood Disability Network Canada</span>
+          <span className="md:hidden text-sm leading-tight">
+            Childhood Disability<br />Network Canada
+          </span>
         </Link>
 
-        <nav className="flex gap-8 max-sm:hidden" aria-label="Main navigation" role="navigation">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex gap-6" aria-label="Main navigation" role="navigation">
           <Link
             to="/"
             className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/' ? 'text-purple-900' : ''}`}
@@ -65,11 +69,11 @@ export const Header = () => {
           <Link
             to="/advocacy"
             className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/advocacy' ? 'text-purple-900' : ''}`}
-            aria-label="Advocacy Hub"
+            aria-label="Advocacy"
             aria-current={location.pathname === '/advocacy' ? 'page' : undefined}
             tabIndex={0}
           >
-            Advocacy Hub
+            Advocacy
           </Link>
           <Link
             to="/resources"
@@ -81,26 +85,27 @@ export const Header = () => {
             Resources
           </Link>
           <Link
-            to="/find-support"
-            className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/find-support' ? 'text-purple-900' : ''}`}
-            aria-label="Find Support"
-            aria-current={location.pathname === '/find-support' ? 'page' : undefined}
-            tabIndex={0}
-          >
-            Find Support
-          </Link>
-          <Link
             to="/join-community"
             className={`text-gray-900 text-base font-semibold hover:text-purple transition-colors px-3 py-1 rounded-md ${location.pathname === '/join-community' ? 'text-purple-900' : ''}`}
             aria-label="Join Community"
             aria-current={location.pathname === '/join-community' ? 'page' : undefined}
             tabIndex={0}
           >
-            Join Community
+            Join Our Network
           </Link>
         </nav>
 
-        {userInitial ? (
+        {/* Mobile Hamburger Menu Button */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden text-purple-900 text-2xl p-2 hover:bg-purple-50 rounded-md transition-colors"
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMenuOpen}
+          tabIndex={0}
+        >
+          {isMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+        {/* {userInitial ? (
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen((prev) => !prev)}
@@ -151,8 +156,64 @@ export const Header = () => {
           >
             Sign In
           </Link>
-        )}
+        )} */}
       </div>
+
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-white border-t border-gray-200 shadow-lg overflow-hidden"
+          >
+            <nav className="flex flex-col py-4 px-4 space-y-2" aria-label="Mobile navigation">
+              <Link
+                to="/"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-gray-900 text-base font-semibold hover:text-purple hover:bg-purple-50 transition-colors px-4 py-3 rounded-md ${location.pathname === '/' ? 'text-purple-900 bg-purple-50' : ''}`}
+                aria-label="Home"
+                aria-current={location.pathname === '/' ? 'page' : undefined}
+                tabIndex={0}
+              >
+                Home
+              </Link>
+              <Link
+                to="/advocacy"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-gray-900 text-base font-semibold hover:text-purple hover:bg-purple-50 transition-colors px-4 py-3 rounded-md ${location.pathname === '/advocacy' ? 'text-purple-900 bg-purple-50' : ''}`}
+                aria-label="Advocacy"
+                aria-current={location.pathname === '/advocacy' ? 'page' : undefined}
+                tabIndex={0}
+              >
+                Advocacy
+              </Link>
+              <Link
+                to="/resources"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-gray-900 text-base font-semibold hover:text-purple hover:bg-purple-50 transition-colors px-4 py-3 rounded-md ${location.pathname === '/resources' ? 'text-purple-900 bg-purple-50' : ''}`}
+                aria-label="Resources"
+                aria-current={location.pathname === '/resources' ? 'page' : undefined}
+                tabIndex={0}
+              >
+                Resources
+              </Link>
+              <Link
+                to="/join-community"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-gray-900 text-base font-semibold hover:text-purple hover:bg-purple-50 transition-colors px-4 py-3 rounded-md ${location.pathname === '/join-community' ? 'text-purple-900 bg-purple-50' : ''}`}
+                aria-label="Join Community"
+                aria-current={location.pathname === '/join-community' ? 'page' : undefined}
+                tabIndex={0}
+              >
+                Join Our Network
+              </Link>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

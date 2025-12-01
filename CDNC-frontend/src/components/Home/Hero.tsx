@@ -89,47 +89,19 @@ export const Hero = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-gradient"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-gradient py-2"
           >
-            Supporting Caregivers Together
+            Childhood Disability Network Canada
           </motion.h1>
           <motion.p 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg sm:text-xl mb-12 text-text-secondary max-w-2xl mx-auto"
+            className="text-lg sm:text-xl mb-12 text-text-secondary max-w-2xl  mx-auto"
           >
-            Join our community of caregivers, find resources, and make your voice
-            heard through advocacy.
+            We advocate for caregivers and their children and youth with disabilities
+             to ensure access to supports from birth through adulthood. 
           </motion.p>
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center"
-          >
-            <Link
-              to="/join-community"
-              className="btn btn-primary flex items-center justify-center gap-2"
-            >
-              <TiUser className="text-xl" />
-              <span>Join Community</span>
-            </Link>
-            <Link
-              to="/send-letter"
-              className="btn btn-primary flex items-center justify-center gap-2"
-            >
-              <TiMail className="text-xl" />
-              <span>Send Letter</span>
-            </Link>
-            <Link
-              to="/find-support"
-              className="btn btn-primary flex items-center justify-center gap-2"
-            >
-              <TiHeart className="text-xl" />
-              <span>Find Support</span>
-            </Link>
-          </motion.div>
         </div>
 
         {/* Slideshow Indicators */}
@@ -145,13 +117,6 @@ export const Hero = () => {
             />
           ))}
         </div>
-      </section>
-
-      <section>
-        <RunningBanner
-          items={runningBannerItems}
-          className="bg-primary-light text-white font-semibold py-3 text-lg"
-        />
       </section>
     </main>
   );
