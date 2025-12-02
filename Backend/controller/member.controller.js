@@ -46,16 +46,22 @@ const create = async (req, res) => {
     });
 
     try {
-      await sendMemberConfirmationEmail(member);
-    } catch (err) {
-      console.error("❌ Failed to send confirmation email:", err);
-    }
+     setImmediate(() => {
+      Promise.allSettled([sendMemberConfirmationEmail(member), trackMemberEnrollment(member)])
+        .then(([emailResult, analyticsResult]) => {
+          if (emailResult.status === "rejected") {
+            console.error("❌ Failed to send confirmation email:", emailResult.reason);
+          }
 
     try {
-      await trackMemberEnrollment(member);
-    } catch (err) {
-      console.error("❌ Failed to log analytics event:", err);
-    }
+     if (analyticsResult.status === "rejected") {
+            console.error("❌ Failed to log analytics event:", analyticsResult.reason);
+          }
+        })
+        .catch((err) => {
+          console.error("❌ Unexpected error while processing background enrollment tasks:", err);
+        });
+    });
 
     return res.status(201).json({
       message: "Enrollment successful",
