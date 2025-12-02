@@ -45,7 +45,7 @@ const create = async (req, res) => {
       termsAcceptedAt: new Date(),
     });
 
-    try {
+    
      setImmediate(() => {
       Promise.allSettled([sendMemberConfirmationEmail(member), trackMemberEnrollment(member)])
         .then(([emailResult, analyticsResult]) => {
