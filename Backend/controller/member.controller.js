@@ -57,7 +57,7 @@ const create = async (req, res) => {
      if (analyticsResult.status === "rejected") {
             console.error("❌ Failed to log analytics event:", analyticsResult.reason);
           }
-        })
+        }
         .catch((err) => {
           console.error("❌ Unexpected error while processing background enrollment tasks:", err);
         });
