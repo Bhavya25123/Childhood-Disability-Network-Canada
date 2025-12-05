@@ -1,7 +1,7 @@
 # User Manual – Childhood Disability Advocacy Hub
 
 This guide walks caregivers, supporters, and advocates through the core features of the Childhood Disability Advocacy Hub (CDAH) website. Follow the step-by-step instructions to browse resources, join the community, and contact elected officials.
-
+ 
 ## 1. Getting Started
 
 1. Open the site in your browser. The landing page highlights current initiatives, featured resources, and advocacy opportunities.【F:CDNC-frontend/src/pages/Index.tsx†L1-L33】
